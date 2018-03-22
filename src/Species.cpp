@@ -126,10 +126,13 @@ namespace NEAT
 
         // Make a pool of only evaluated individuals!
         std::vector<Genome> t_Evaluated;
+        t_Evaluated.reserve(m_Individuals.size());
         for (unsigned int i = 0; i < m_Individuals.size(); i++)
         {
             if (m_Individuals[i].IsEvaluated())
+            {
                 t_Evaluated.push_back(m_Individuals[i]);
+            }
         }
 
         ASSERT(t_Evaluated.size() > 0);
@@ -180,6 +183,7 @@ namespace NEAT
         {
             // roulette wheel selection
             std::vector<double> t_probs;
+            t_probs.reserve(t_Evaluated.size());
             for (unsigned int i = 0; i < t_Evaluated.size(); i++)
             {
                 t_probs.push_back(t_Evaluated[i].GetFitness());
