@@ -149,9 +149,6 @@ namespace NEAT
         // Warning!!!! The individuals must be sorted by best fitness for this to work
         int t_chosen_one = 0;
         
-        // then sort them here just to make sure
-        std::sort(t_Evaluated.begin(), t_Evaluated.end(), genome_greater);
-
         // Here might be introduced better selection scheme, but this works OK for now
         if (!a_Parameters.RouletteWheelSelection)
         {   //start with the last one just for comparison sake
