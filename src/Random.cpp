@@ -93,7 +93,12 @@ int RNG::RandInt(int aX, int aY)
             return aY;
         }
     }
-    return aX + (rand() % (aY - aX + 1));
+    int denom = (aY - aX + 1);
+    if (denom == 0)
+    {
+        return 0;
+    }
+    return aX + (rand() % denom);
 #endif
     
 }
