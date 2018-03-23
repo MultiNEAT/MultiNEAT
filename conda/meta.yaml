@@ -22,6 +22,7 @@ requirements:
     - matplotlib=2.2*
     - opencv=3.3*
     - psutil
+    - ipyparallel
     # - progressbar # Python 2.7 only, needs to be replaced in main library code
 
 about:
