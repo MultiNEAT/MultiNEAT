@@ -44,9 +44,9 @@ void RNG::Seed(long a_Seed)
 {
 #ifdef USE_BOOST_RANDOM
     gen.seed(a_Seed);
-#else
-    srand(a_Seed);
 #endif
+
+    srand(a_Seed);
 }
 
 void RNG::TimeSeed()
