@@ -51,7 +51,7 @@ namespace NEAT
         return ((ls->GetFitness()) > (rs->GetFitness()));
     }
     
-    bool genome_greater(Genome ls, Genome rs)
+    bool genome_greater(const Genome& ls, const Genome& rs)
     {
         return (ls.GetFitness() > rs.GetFitness());
     }
