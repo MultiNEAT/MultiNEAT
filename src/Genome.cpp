@@ -1409,22 +1409,22 @@ namespace NEAT
     // Returns a random activation function from the canonical set based ot probabilities
     ActivationFunction GetRandomActivation(const Parameters &a_Parameters, RNG &a_RNG)
     {
-        std::vector<double> t_probs;
-
-        t_probs.push_back(a_Parameters.ActivationFunction_SignedSigmoid_Prob);
-        t_probs.push_back(a_Parameters.ActivationFunction_UnsignedSigmoid_Prob);
-        t_probs.push_back(a_Parameters.ActivationFunction_Tanh_Prob);
-        t_probs.push_back(a_Parameters.ActivationFunction_TanhCubic_Prob);
-        t_probs.push_back(a_Parameters.ActivationFunction_SignedStep_Prob);
-        t_probs.push_back(a_Parameters.ActivationFunction_UnsignedStep_Prob);
-        t_probs.push_back(a_Parameters.ActivationFunction_SignedGauss_Prob);
-        t_probs.push_back(a_Parameters.ActivationFunction_UnsignedGauss_Prob);
-        t_probs.push_back(a_Parameters.ActivationFunction_Abs_Prob);
-        t_probs.push_back(a_Parameters.ActivationFunction_SignedSine_Prob);
-        t_probs.push_back(a_Parameters.ActivationFunction_UnsignedSine_Prob);
-        t_probs.push_back(a_Parameters.ActivationFunction_Linear_Prob);
-        t_probs.push_back(a_Parameters.ActivationFunction_Relu_Prob);
-        t_probs.push_back(a_Parameters.ActivationFunction_Softplus_Prob);
+        const std::vector<double> t_probs = {
+            a_Parameters.ActivationFunction_SignedSigmoid_Prob,
+            a_Parameters.ActivationFunction_UnsignedSigmoid_Prob,
+            a_Parameters.ActivationFunction_Tanh_Prob,
+            a_Parameters.ActivationFunction_TanhCubic_Prob,
+            a_Parameters.ActivationFunction_SignedStep_Prob,
+            a_Parameters.ActivationFunction_UnsignedStep_Prob,
+            a_Parameters.ActivationFunction_SignedGauss_Prob,
+            a_Parameters.ActivationFunction_UnsignedGauss_Prob,
+            a_Parameters.ActivationFunction_Abs_Prob,
+            a_Parameters.ActivationFunction_SignedSine_Prob,
+            a_Parameters.ActivationFunction_UnsignedSine_Prob,
+            a_Parameters.ActivationFunction_Linear_Prob,
+            a_Parameters.ActivationFunction_Relu_Prob,
+            a_Parameters.ActivationFunction_Softplus_Prob,
+        };
 
         return (NEAT::ActivationFunction) a_RNG.Roulette(t_probs);
     }
