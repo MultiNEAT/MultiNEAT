@@ -126,9 +126,14 @@ def getbest(i):
 
 gens = []
 for run in range(100):
+    curtime = time.time()
+
     gen = getbest(run)
     gens += [gen]
-    print('Run:', run, 'Generations to solve XOR:', gen)
+
+    elapsed = time.time() - curtime
+    elapsedPerGen = (elapsed / gen) * 1000
+    print('Run:', run, 'Generations to solve XOR:', gen, '| in %3.2f ms per gen, %3.4f s total' % (elapsedPerGen, elapsed))
 avg_gens = sum(gens) / len(gens)
 
 print('All:', gens)
