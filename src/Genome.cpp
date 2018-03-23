@@ -711,6 +711,20 @@ namespace NEAT
         return false;
     }
 
+    namespace Detail
+    {
+        struct LoopsDetector : public boost::dfs_visitor<>
+        {
+            LoopsDetector()
+            : m_has_loops(false) { }
+            
+            template <typename Edge, typename Graph>
+            void back_edge(const Edge&, Graph&) { m_has_loops = true; }
+            
+            bool m_has_loops;
+        };
+    }
+
     bool Genome::HasLoops()
     {
         NeuralNetwork net;
@@ -724,18 +738,12 @@ namespace NEAT
             bs::add_edge(net.m_connections[i].m_source_neuron_idx, net.m_connections[i].m_target_neuron_idx, g);
         }
 
-        typedef std::vector<Vertex> container;
-        container c;
-        try
-        {
-            bs::topological_sort(g, std::back_inserter(c));
-        }
-        catch (bs::not_a_dag)
-        {
-            has_cycles = true;
-        }
+        // auto params = boost::bgl_named_params<int, boost::buffer_param_t>(0);
+        Detail::LoopsDetector detector;
+        depth_first_search(g, boost::visitor(detector));
+        // depth_first_search(g, params.visitor(detector));
 
-        return has_cycles;
+        return detector.m_has_loops;
     }
 
     // Returns true if the specified link is present in the genome
