@@ -71,7 +71,7 @@ public:
     double RandGaussSigned();
 
     // Returns an index given a vector of probabilities
-    int Roulette(std::vector<double>& a_probs);
+    int Roulette(const std::vector<double>& a_probs);
 };
 
 } // namespace NEAT

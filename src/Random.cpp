@@ -162,7 +162,7 @@ double RNG::RandGaussSigned()
 #endif
 }
 
-int RNG::Roulette(std::vector<double>& a_probs)
+int RNG::Roulette(const std::vector<double>& a_probs)
 {
 #ifdef USE_BOOST_RANDOM
     boost::random::discrete_distribution<> d_dist(a_probs);
