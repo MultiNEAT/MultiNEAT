@@ -55,6 +55,15 @@ try:
 except:
     pbar_installed = False
 
+def static_vars(**kwargs):
+    """ A little helper that allows to add static vars to functions """
+    def decorate(func):
+        for k in kwargs:
+            setattr(func, k, kwargs[k])
+        return func
+    return decorate
+
+@static_vars(counter=0)
 
 # Evaluates all genomes in sequential manner (using only 1 process) and
 # returns a list of corresponding fitness values.
@@ -97,6 +106,7 @@ def EvaluateGenomeList_Serial(genome_list, evaluator, display=True, show_elapsed
 # Evaluates all genomes in parallel manner (many processes) and returns a
 # list of corresponding fitness values.
 # evaluator is a callable that is supposed to take Genome as argument and return a double
+@static_vars(executor=None)
 def EvaluateGenomeList_Parallel(genome_list, evaluator,
                                 cores=None, display=True, ipython_client=None):
     ''' If ipython_client is None, will use concurrent.futures. 
@@ -110,15 +120,20 @@ def EvaluateGenomeList_Parallel(genome_list, evaluator,
             cores = psutil.cpu_count(logical=False)
         except:
             cores = 2
-
+    batch_size = min(100, int(len(genome_list) / cores))
     if ipython_client is None or not ipython_installed:
-        with ProcessPoolExecutor(max_workers=cores) as executor:
-            for i, fitness in enumerate(executor.map(evaluator, genome_list)):
-                fitnesses += [fitness]
+        
+        executor = EvaluateGenomeList_Parallel.executor
+        if not executor:
+            executor = ProcessPoolExecutor(max_workers=cores)
+            EvaluateGenomeList_Parallel.executor = executor
 
-                if display:
-                    if ipython_installed: clear_output(wait=True)
-                    print('Individuals: (%s/%s) Fitness: %3.4f' % (i, len(genome_list), fitness))
+        for i, fitness in enumerate(executor.map(evaluator, genome_list, chunksize=batch_size)):
+            fitnesses += [fitness]
+
+            if display:
+                if ipython_installed: clear_output(wait=True)
+                print('Individuals: (%s/%s) Fitness: %3.4f' % (i, len(genome_list), fitness))
     else:
         if type(ipython_client) == Client:
             lbview = ipython_client.load_balanced_view()
