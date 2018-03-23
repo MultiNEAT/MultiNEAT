@@ -45,12 +45,6 @@ namespace NEAT
 {
     RNG global_rng;
     
-    // Sorts the members of this species by fitness
-    bool fitness_greater(Genome *ls, Genome *rs)
-    {
-        return ((ls->GetFitness()) > (rs->GetFitness()));
-    }
-    
     bool genome_greater(const Genome& ls, const Genome& rs)
     {
         return (ls.GetFitness() > rs.GetFitness());
@@ -86,31 +80,6 @@ namespace NEAT
         if (m_G > 255) m_G=255;
         m_B = static_cast<int>(global_rng.RandFloat() * 255);
     }
-
-    Species &Species::operator=(const Species &a_S)
-    {
-        // self assignment guard
-        if (this != &a_S)
-        {
-            m_ID = a_S.m_ID;
-            m_Representative = a_S.m_Representative;
-            m_BestGenome = a_S.m_BestGenome;
-            m_BestSpecies = a_S.m_BestSpecies;
-            m_WorstSpecies = a_S.m_WorstSpecies;
-            m_BestFitness = a_S.m_BestFitness;
-            m_GensNoImprovement = a_S.m_GensNoImprovement;
-            m_AgeGenerations = a_S.m_AgeGenerations;
-            m_OffspringRqd = a_S.m_OffspringRqd;
-            m_R = a_S.m_R;
-            m_G = a_S.m_G;
-            m_B = a_S.m_B;
-
-            m_Individuals = a_S.m_Individuals;
-        }
-
-        return *this;
-    }
-
 
     // adds a new member to the species and updates variables
     void Species::AddIndividual(Genome &a_Genome)
@@ -846,50 +815,27 @@ namespace NEAT
         {
             ADD_NODE = 0, ADD_LINK, REMOVE_NODE, REMOVE_LINK, CHANGE_ACTIVATION_FUNCTION,
             MUTATE_WEIGHTS, MUTATE_ACTIVATION_A, MUTATE_ACTIVATION_B, MUTATE_TIMECONSTS, MUTATE_BIASES,
-            MUTATE_NEURON_TRAITS, MUTATE_LINK_TRAITS, MUTATE_GENOME_TRAITS
+            MUTATE_NEURON_TRAITS, MUTATE_LINK_TRAITS, MUTATE_GENOME_TRAITS,
+
+            MutationTypesCount // should go after last type id
         };
-        std::vector<int> t_muts;
-        std::vector<double> t_mut_probs;
-    
-        // ADD_NODE;
-        t_mut_probs.push_back(a_Parameters.MutateAddNeuronProb);
-    
-        // ADD_LINK;
-        t_mut_probs.push_back(a_Parameters.MutateAddLinkProb);
-    
-        // REMOVE_NODE;
-        t_mut_probs.push_back(a_Parameters.MutateRemSimpleNeuronProb);
-    
-        // REMOVE_LINK;
-        t_mut_probs.push_back(a_Parameters.MutateRemLinkProb);
-    
-        // CHANGE_ACTIVATION_FUNCTION;
-        t_mut_probs.push_back(a_Parameters.MutateNeuronActivationTypeProb);
-    
-        // MUTATE_WEIGHTS;
-        t_mut_probs.push_back(a_Parameters.MutateWeightsProb);
-    
-        // MUTATE_ACTIVATION_A;
-        t_mut_probs.push_back(a_Parameters.MutateActivationAProb);
-    
-        // MUTATE_ACTIVATION_B;
-        t_mut_probs.push_back(a_Parameters.MutateActivationBProb);
-    
-        // MUTATE_TIMECONSTS;
-        t_mut_probs.push_back(a_Parameters.MutateNeuronTimeConstantsProb);
-    
-        // MUTATE_BIASES;
-        t_mut_probs.push_back(a_Parameters.MutateNeuronBiasesProb);
-    
-        // MUTATE_NEURON_TRAITS;
-        t_mut_probs.push_back( a_Parameters.MutateNeuronTraitsProb );
-    
-        // MUTATE_LINK_TRAITS;
-        t_mut_probs.push_back( a_Parameters.MutateLinkTraitsProb );
-    
-        // MUTATE_GENOME_TRAITS;
-        t_mut_probs.push_back( a_Parameters.MutateGenomeTraitsProb );
-    
+        
+        std::vector<double> t_mut_probs(MutationTypesCount);
+        
+        t_mut_probs[ADD_NODE] = a_Parameters.MutateAddNeuronProb;
+        t_mut_probs[ADD_LINK] = (a_Parameters.MutateAddLinkProb);
+        t_mut_probs[REMOVE_NODE] = a_Parameters.MutateRemSimpleNeuronProb;
+        t_mut_probs[REMOVE_LINK] = a_Parameters.MutateRemLinkProb;
+        t_mut_probs[CHANGE_ACTIVATION_FUNCTION] = a_Parameters.MutateNeuronActivationTypeProb;
+        t_mut_probs[MUTATE_WEIGHTS] = a_Parameters.MutateWeightsProb;
+        t_mut_probs[MUTATE_ACTIVATION_A] = a_Parameters.MutateActivationAProb;
+        t_mut_probs[MUTATE_ACTIVATION_B] = a_Parameters.MutateActivationBProb;
+        t_mut_probs[MUTATE_TIMECONSTS] = a_Parameters.MutateNeuronTimeConstantsProb;
+        t_mut_probs[MUTATE_BIASES] = a_Parameters.MutateNeuronBiasesProb;
+        t_mut_probs[MUTATE_NEURON_TRAITS] =  a_Parameters.MutateNeuronTraitsProb;
+        t_mut_probs[MUTATE_LINK_TRAITS] =  a_Parameters.MutateLinkTraitsProb;
+        t_mut_probs[MUTATE_GENOME_TRAITS] =  a_Parameters.MutateGenomeTraitsProb;
+
         // Special consideration for phased searching - do not allow certain mutations depending on the search mode
         // also don't use additive mutations if we just want to get rid of the clones
         if ((a_Pop.GetSearchMode() == SIMPLIFYING) || t_baby_is_clone)

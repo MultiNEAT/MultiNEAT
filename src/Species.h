@@ -102,8 +102,13 @@ public:
     // initializes a species with a leader genome and an ID number
     Species(const Genome& a_Seed, int a_id);
 
-    // assignment operator
-    Species& operator=(const Species& a_g);
+    // assignment 
+    Species(const Species&) = default;
+    Species& operator=(const Species& a_g) = default;
+    
+    // move
+    Species(Species&&) = default;
+    Species& operator=(Species&&) = default;
 
     // comparison operator (nessesary for boost::python)
     // todo: implement a better comparison technique
@@ -202,6 +207,12 @@ public:
     void RemoveIndividual(unsigned int a_idx);
 };
 
+    static inline void swap(Species &a, Species &b)
+    {
+        Species c(std::move(a));
+        a = std::move(b);
+        b = std::move(c);
+    }
 } // namespace NEAT
 
 #endif
