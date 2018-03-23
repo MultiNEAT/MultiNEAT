@@ -77,56 +77,6 @@ namespace NEAT
         m_initial_num_links = 0;
     }
 
-
-    // Copy constructor
-    Genome::Genome(const Genome &a_G)
-    {
-        m_ID = a_G.m_ID;
-        m_Depth = a_G.m_Depth;
-        m_NeuronGenes = a_G.m_NeuronGenes;
-        m_LinkGenes = a_G.m_LinkGenes;
-        m_GenomeGene = a_G.m_GenomeGene;
-        m_Fitness = a_G.m_Fitness;
-        m_NumInputs = a_G.m_NumInputs;
-        m_NumOutputs = a_G.m_NumOutputs;
-        m_AdjustedFitness = a_G.m_AdjustedFitness;
-        m_OffspringAmount = a_G.m_OffspringAmount;
-        m_Evaluated = a_G.m_Evaluated;
-        m_PhenotypeBehavior = a_G.m_PhenotypeBehavior;
-        m_initial_num_neurons = a_G.m_initial_num_neurons;
-        m_initial_num_links = a_G.m_initial_num_links;
-#ifdef USE_BOOST_PYTHON
-        m_behavior = a_G.m_behavior;
-#endif
-    }
-
-    // assignment operator
-    Genome &Genome::operator=(const Genome &a_G)
-    {
-        // self assignment guard
-        if (this != &a_G)
-        {
-            m_ID = a_G.m_ID;
-            m_Depth = a_G.m_Depth;
-            m_NeuronGenes = a_G.m_NeuronGenes;
-            m_LinkGenes = a_G.m_LinkGenes;
-            m_GenomeGene = a_G.m_GenomeGene;
-            m_Fitness = a_G.m_Fitness;
-            m_AdjustedFitness = a_G.m_AdjustedFitness;
-            m_NumInputs = a_G.m_NumInputs;
-            m_NumOutputs = a_G.m_NumOutputs;
-            m_OffspringAmount = a_G.m_OffspringAmount;
-            m_Evaluated = a_G.m_Evaluated;
-            m_PhenotypeBehavior = a_G.m_PhenotypeBehavior;
-            m_initial_num_neurons = a_G.m_initial_num_neurons;
-            m_initial_num_links = a_G.m_initial_num_links;
-#ifdef USE_BOOST_PYTHON
-            m_behavior = a_G.m_behavior;
-#endif
-        }
-
-        return *this;
-    }
     
     // New constructor that creates a fully-connected CTRNN
     Genome::Genome(unsigned int a_ID,
@@ -738,10 +688,8 @@ namespace NEAT
             bs::add_edge(net.m_connections[i].m_source_neuron_idx, net.m_connections[i].m_target_neuron_idx, g);
         }
 
-        // auto params = boost::bgl_named_params<int, boost::buffer_param_t>(0);
         Detail::LoopsDetector detector;
         depth_first_search(g, boost::visitor(detector));
-        // depth_first_search(g, params.visitor(detector));
 
         return detector.m_has_loops;
     }
@@ -770,6 +718,7 @@ namespace NEAT
         a_Net.Clear();
         a_Net.SetInputOutputDimentions(m_NumInputs, m_NumOutputs);
 
+        a_Net.ReserveNeuronsMemory(NumNeurons());
         // Fill the net with the neurons
         for (unsigned int i = 0; i < NumNeurons(); i++)
         {
@@ -786,6 +735,7 @@ namespace NEAT
             a_Net.AddNeuron(t_n);
         }
 
+        a_Net.ReserveConnectionsMemory(NumLinks());
         // Fill the net with the connections
         for (unsigned int i = 0; i < NumLinks(); i++)
         {

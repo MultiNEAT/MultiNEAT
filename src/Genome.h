@@ -77,7 +77,7 @@ namespace NEAT
     
     typedef bs::adjacency_list <bs::vecS, bs::vecS, bs::directedS> Graph;
     typedef bs::graph_traits<Graph>::vertex_descriptor Vertex;
-    
+
     class Genome
     {
         /////////////////////
@@ -166,11 +166,11 @@ namespace NEAT
         
         Genome();
         
-        // copy constructor
-        Genome(const Genome &a_g);
-        
-        // assignment operator
-        Genome &operator=(const Genome &a_g);
+        Genome(const Genome &a_g) = default;
+        Genome(Genome &&a_g) = default;
+
+        Genome &operator=(const Genome &a_g) = default;
+        Genome &operator=(Genome &&a_g) = default;
         
         // comparison operator (nessesary for boost::python)
         // todo: implement a better comparison technique
@@ -732,7 +732,12 @@ namespace NEAT
 
 #define DBG(x) { std::cerr << x << "\n"; }
     
-    
+    static inline void swap(Genome &a, Genome &b)
+    {
+        Genome c(std::move(a));
+        a = std::move(b);
+        b = std::move(c);
+    }
 } // namespace NEAT
 
 #endif
