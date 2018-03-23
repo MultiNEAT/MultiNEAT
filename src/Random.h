@@ -44,7 +44,6 @@ namespace NEAT
 
 class RNG
 {
-    
 #ifdef USE_BOOST_RANDOM
     boost::random::mt19937 gen;
 #endif
@@ -74,8 +73,6 @@ public:
     // Returns an index given a vector of probabilities
     int Roulette(std::vector<double>& a_probs);
 };
-
-
 
 } // namespace NEAT
 
