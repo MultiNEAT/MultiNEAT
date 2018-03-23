@@ -166,11 +166,15 @@ public:
     // accessor methods
     void AddNeuron(const Neuron& a_n) { m_neurons.push_back( a_n ); }
     void AddConnection(const Connection& a_c) { m_connections.push_back( a_c ); }
-    Connection GetConnectionByIndex(unsigned int a_idx) const
+    
+    void ReserveNeuronsMemory(const size_t capacity) { m_neurons.reserve( capacity ); }
+    void ReserveConnectionsMemory(const size_t capacity) { m_connections.reserve( capacity ); }
+
+    const Connection& GetConnectionByIndex(unsigned int a_idx) const
     {
         return m_connections[a_idx];
     }
-    Neuron GetNeuronByIndex(unsigned int a_idx) const
+    const Neuron& GetNeuronByIndex(unsigned int a_idx) const
     {
         return m_neurons[a_idx];
     }

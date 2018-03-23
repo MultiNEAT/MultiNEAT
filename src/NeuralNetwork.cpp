@@ -173,6 +173,7 @@ NeuralNetwork::NeuralNetwork(bool a_Minimal)
         // The hidden neuron       // index 4
         Neuron t_h1;
 
+        m_neurons.reserve(5);
         m_neurons.push_back(t_i1);
         m_neurons.push_back(t_i2);
         m_neurons.push_back(t_i3);
@@ -182,6 +183,8 @@ NeuralNetwork::NeuralNetwork(bool a_Minimal)
         // The connections
         Connection t_c;
 
+        m_connections.reserve(7);
+        
         t_c.m_source_neuron_idx = 0;
         t_c.m_target_neuron_idx = 3;
         t_c.m_weight = 0;
@@ -650,6 +653,7 @@ void NeuralNetwork::Input_numpy(const py::numpy::ndarray& a_Inputs)
 std::vector<double> NeuralNetwork::Output()
 {
     std::vector<double> t_output;
+    t_output.reserve(m_num_outputs);
     for (int i = 0; i < m_num_outputs; i++)
     {
         t_output.push_back(m_neurons[i + m_num_inputs].m_activation);

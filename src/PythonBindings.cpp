@@ -288,7 +288,7 @@ BOOST_PYTHON_MODULE(_MultiNEAT)
 ///////////////////////////////////////////////////////////////////
 
     class_<Species>("Species", init<Genome, int>())
-            .def("GetLeader", &Species::GetLeader)
+            .def("GetLeader", &Species::GetLeader, return_value_policy<copy_const_reference>())
             .def("NumIndividuals", &Species::NumIndividuals)
             .def("GensNoImprovement", &Species::GensNoImprovement)
             .def("ID", &Species::ID)

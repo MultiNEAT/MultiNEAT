@@ -120,18 +120,18 @@ namespace NEAT
 
 
     // returns an individual randomly selected from the best N%
-    Genome Species::GetIndividual(Parameters &a_Parameters, RNG &a_RNG) const
+    const Genome& Species::GetIndividual(Parameters &a_Parameters, RNG &a_RNG) const
     {
         ASSERT(m_Individuals.size() > 0);
 
         // Make a pool of only evaluated individuals!
-        std::vector<Genome> t_Evaluated;
+        std::vector<size_t> t_Evaluated;
         t_Evaluated.reserve(m_Individuals.size());
-        for (unsigned int i = 0; i < m_Individuals.size(); i++)
+        for (size_t i = 0; i < m_Individuals.size(); i++)
         {
             if (m_Individuals[i].IsEvaluated())
             {
-                t_Evaluated.push_back(m_Individuals[i]);
+                t_Evaluated.push_back(i);
             }
         }
 
@@ -139,11 +139,11 @@ namespace NEAT
 
         if (t_Evaluated.size() == 1)
         {
-            return (t_Evaluated[0]);
+            return m_Individuals[t_Evaluated[0]];
         }
         else if (t_Evaluated.size() == 2)
         {
-            return (t_Evaluated[Rounded(a_RNG.RandFloat())]);
+            return m_Individuals[t_Evaluated[Rounded(a_RNG.RandFloat())]];
         }
 
         // Warning!!!! The individuals must be sorted by best fitness for this to work
@@ -154,9 +154,7 @@ namespace NEAT
         {   //start with the last one just for comparison sake
             //int temp_genome;
 
-            //int t_num_parents = static_cast<int>( floor(
-            //        (a_Parameters.SurvivalRate * (static_cast<double>(t_Evaluated.size()))) + 1.0));
-            int t_num_parents = (int)(a_Parameters.SurvivalRate * (double)(t_Evaluated.size()));
+            size_t t_num_parents = static_cast<size_t>(a_Parameters.SurvivalRate * t_Evaluated.size());
     
             ASSERT(t_num_parents > 0);
             ASSERT(t_num_parents < t_Evaluated.size());
@@ -183,17 +181,17 @@ namespace NEAT
             t_probs.reserve(t_Evaluated.size());
             for (unsigned int i = 0; i < t_Evaluated.size(); i++)
             {
-                t_probs.push_back(t_Evaluated[i].GetFitness());
+                t_probs.push_back(m_Individuals[t_Evaluated[i]].GetFitness());
             }
             t_chosen_one = a_RNG.Roulette(t_probs);
         }
 
-        return (t_Evaluated[t_chosen_one]);
+        return m_Individuals[t_Evaluated[t_chosen_one]];
     }
 
 
     // returns a completely random individual
-    Genome Species::GetRandomIndividual(RNG &a_RNG) const
+    const Genome& Species::GetRandomIndividual(RNG &a_RNG) const
     {
         if (m_Individuals.size() == 0) // no members yet, return representative
         {
@@ -208,7 +206,7 @@ namespace NEAT
     }
 
     // returns the leader (the member having the best fitness)
-    Genome Species::GetLeader() const
+    const Genome& Species::GetLeader() const
     {
         // Don't store the leader any more
         // Perform a search over the members and return the most fit member
@@ -236,7 +234,7 @@ namespace NEAT
     }
 
 
-    Genome Species::GetRepresentative() const
+    const Genome& Species::GetRepresentative() const
     {
         return m_Representative;
     }
@@ -759,7 +757,7 @@ namespace NEAT
             a_Pop.m_GenomeArchive.push_back(t_baby);
         }
 
-        return t_baby;
+        return std::move(t_baby);
     }
 
 
