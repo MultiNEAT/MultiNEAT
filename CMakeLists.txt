@@ -9,7 +9,7 @@ include(FindPythonLibs)
 set(Boost_USE_STATIC_LIBS       OFF) # only find static libs
 set(Boost_USE_MULTITHREADED      ON)
 set(Boost_USE_STATIC_RUNTIME    OFF)
-find_package(Boost COMPONENTS date_time system filesystem python3 serialization)
+find_package(Boost COMPONENTS date_time system filesystem python3 numpy3 serialization)
 if(Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
 endif()
@@ -17,7 +17,6 @@ endif()
 include_directories(${PYTHON_INCLUDE_DIRS})
 
 add_definitions(-DUSE_BOOST_PYTHON)
-add_definitions(-DUSE_BOOST_RANDOM)
 
 set(SOURCE_FILES
     src/Assert.h
@@ -49,4 +48,5 @@ set(SOURCE_FILES
 
 
 add_executable(MultiNEAT ${SOURCE_FILES})
+
 target_link_libraries(MultiNEAT ${Boost_LIBRARIES} ${PYTHON_LIBRARIES} pthread)
