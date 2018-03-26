@@ -20,6 +20,7 @@ add_definitions(-DUSE_BOOST_PYTHON)
 
 set(SOURCE_FILES
     src/Assert.h
+    src/Genes.cpp
     src/Genes.h
     src/Genome.cpp
     src/Genome.h
