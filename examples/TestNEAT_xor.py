@@ -10,7 +10,7 @@ import cv2
 import numpy as np
 import pickle as pickle
 import MultiNEAT as NEAT
-from MultiNEAT import EvaluateGenomeList_Serial
+from MultiNEAT import EvaluateGenomeList_Serial, EvaluateGenomeList_Parallel
 from MultiNEAT import GetGenomeList, ZipFitness
 
 from concurrent.futures import ProcessPoolExecutor, as_completed
@@ -114,6 +114,7 @@ def getbest(i):
     for generation in range(1000):
         genome_list = NEAT.GetGenomeList(pop)
         fitness_list = EvaluateGenomeList_Serial(genome_list, evaluate, display=False)
+        # fitness_list = EvaluateGenomeList_Parallel(genome_list, evaluate, display=False)
         NEAT.ZipFitness(genome_list, fitness_list)
         pop.Epoch()
         generations = generation
