@@ -200,7 +200,9 @@ BOOST_PYTHON_MODULE(_MultiNEAT)
             .def("SetInputOutputDimentions",
             &NeuralNetwork::SetInputOutputDimentions)
 
-            .def("GetTotalConnectionLength", &NeuralNetwork::GetTotalConnectionLength)
+            .def("NumConnections", &NeuralNetwork::NumConnections)
+            .def("NumNeurons", &NeuralNetwork::NumNeurons)
+            .def("NumHiddenNeurons", &NeuralNetwork::NumHiddenNeurons)
 
 
             .def_readwrite("neurons", &NeuralNetwork::m_neurons)
