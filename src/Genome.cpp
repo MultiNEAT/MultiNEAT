@@ -1187,11 +1187,11 @@ namespace NEAT
 
 
     // Returns the absolute distance between this genome and a_G
-    double Genome::CompatibilityDistance(Genome &a_G, Parameters &a_Parameters)
+    double Genome::CompatibilityDistance(const Genome &a_G, const Parameters &a_Parameters)
     {
         // iterators for moving through the genomes' genes
-        std::vector<LinkGene>::iterator t_g1;
-        std::vector<LinkGene>::iterator t_g2;
+        std::vector<LinkGene>::const_iterator t_g1;
+        std::vector<LinkGene>::const_iterator t_g2;
 
         // this variable is the total distance between the genomes
         // if it passes beyond the compatibility treshold, the function returns false
@@ -1370,22 +1370,22 @@ namespace NEAT
         // add trait differences according to each one's coeff
         for(auto it = t_total_link_trait_difference.begin(); it != t_total_link_trait_difference.end(); it++)
         {
-            t_total_distance += (a_Parameters.LinkTraits[it->first].m_ImportanceCoeff * it->second) / t_num_matching_links;
+            t_total_distance += (a_Parameters.LinkTraits.at(it->first).m_ImportanceCoeff * it->second) / t_num_matching_links;
         }
         for(auto it = t_total_neuron_trait_difference.begin(); it != t_total_neuron_trait_difference.end(); it++)
         {
-            t_total_distance += (a_Parameters.NeuronTraits[it->first].m_ImportanceCoeff * it->second) / t_num_matching_neurons;
+            t_total_distance += (a_Parameters.NeuronTraits.at(it->first).m_ImportanceCoeff * it->second) / t_num_matching_neurons;
         }
         for(auto it = t_genome_link_trait_difference.begin(); it != t_genome_link_trait_difference.end(); it++)
         {
-            t_total_distance += (a_Parameters.GenomeTraits[it->first].m_ImportanceCoeff * it->second);
+            t_total_distance += (a_Parameters.GenomeTraits.at(it->first).m_ImportanceCoeff * it->second);
         }
 
         return t_total_distance;
     }
 
     // Returns true if this genome and a_G are compatible (belong in the same species)
-    bool Genome::IsCompatibleWith(Genome &a_G, Parameters &a_Parameters)
+    bool Genome::IsCompatibleWith(const Genome &a_G, Parameters &a_Parameters)
     {
         // full compatibility cases
         if (this == &a_G)

@@ -400,12 +400,12 @@ namespace NEAT
         }
 
         // Compute and return distances between each matching pair of traits
-        std::map<std::string, double> GetTraitDistances(const std::map<std::string, Trait> &other)
+        std::map<std::string, double> GetTraitDistances(const std::map<std::string, Trait> &other) const
         {
             std::map<std::string, double> dist;
             for(auto it = other.begin(); it!=other.end(); it++)
             {
-                TraitType mine = m_Traits[it->first].value;
+                TraitType mine = m_Traits.at(it->first).value;
                 TraitType yours = it->second.value;
 
                 if (!(mine.type() == yours.type()))
@@ -425,7 +425,7 @@ namespace NEAT
                         // also the other genome has to have the trait turned on
                         for(int ix=0; ix<it->second.dep_values.size(); ix++)
                         {
-                            if ((m_Traits[it->second.dep_key].value == it->second.dep_values[ix]) &&
+                            if ((m_Traits.at(it->second.dep_key).value == it->second.dep_values[ix]) &&
                                 (other.at(it->second.dep_key).value == it->second.dep_values[ix]))
                             {
                                 doit = true;

@@ -466,10 +466,10 @@ namespace NEAT
         }
         
         // Returns true if this genome and a_G are compatible (belong in the same species)
-        bool IsCompatibleWith(Genome &a_G, Parameters &a_Parameters);
+        bool IsCompatibleWith(const Genome &a_G, Parameters &a_Parameters);
         
         // returns the absolute compatibility distance between this genome and a_G
-        double CompatibilityDistance(Genome &a_G, Parameters &a_Parameters);
+        double CompatibilityDistance(const Genome &a_G, const Parameters &a_Parameters);
         
         // Calculates the network depth
         void CalculateDepth();
