@@ -9,13 +9,23 @@ build:
 source:
   path: ..
 
+test:
+  source_files:
+    - examples/TestTraits.py
+    - examples/NoveltySearch.py
+    - examples/TestNEAT_xor.py
+    - examples/TestHyperNEAT_xor.py
+
 requirements:
   build:
     - python
+    - ccache
+    - psutil
     - boost=1.65*
     - py-boost=1.65*
   run:
     - python
+    - psutil
     - boost=1.65*
     - py-boost=1.65*
     - numpy>=1.11.3

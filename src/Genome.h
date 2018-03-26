@@ -730,7 +730,7 @@ namespace NEAT
 
 #endif
 
-#define DBG(x) { std::cerr << x << "\n"; }
+#define DBG(x) { std::cerr << x << std::endl; }
     
     static inline void swap(Genome &a, Genome &b)
     {
