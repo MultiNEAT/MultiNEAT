@@ -170,10 +170,16 @@ namespace NEAT
         ////////////////
         LinkGene() = default;
 
+        // Copy
+        LinkGene(const LinkGene &a_g) = default;
+        LinkGene &operator=(const LinkGene &a_g) = default;
+
+        // Move
+        LinkGene(LinkGene &&a_g) = default;
+        LinkGene &operator=(LinkGene &&a_g) = default;
+
         LinkGene(int a_InID, int a_OutID, int a_InnovID, double a_Wgt, bool a_Recurrent = false);
 
-        // assigment operator
-        LinkGene &operator=(const LinkGene &a_g) = default;
 
         //////////////
         // Methods
@@ -292,12 +298,17 @@ namespace NEAT
         // Constructors
         ////////////////
         NeuronGene() = default;
-        
-        /*friend bool operator!=(const NeuronGene &a_lhs, const NeuronGene &a_rhs)
-        {
-            return (a_lhs.m_ID != a_rhs.m_ID);
-        }*/
-        
+
+        // Copy
+        NeuronGene(const NeuronGene &a_g) = default;
+        NeuronGene &operator=(const NeuronGene &a_g) = default;
+
+        // Move
+        NeuronGene(NeuronGene &&a_g) = default;
+        NeuronGene &operator=(NeuronGene &&a_g) = default;
+
+
+
         friend bool operator==(const NeuronGene &a_lhs, const NeuronGene &a_rhs);
 
         NeuronGene(NeuronType a_type, int a_id, double a_splity)
@@ -317,12 +328,6 @@ namespace NEAT
             y = 0;
         }
 
-        // assigment operator
-        NeuronGene &operator=(const NeuronGene &a_g) = default;
-
-        // Move
-        NeuronGene(NeuronGene &&a_g) = default;
-        NeuronGene &operator=(NeuronGene &&a_g) = default;
 
 
         //////////////
