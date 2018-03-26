@@ -37,7 +37,7 @@
 #include "Population.h"
 #include "Utils.h"
 #include "Parameters.h"
-#include "assert.h"
+#include "Assert.h"
 
 #define COMPAT_EQUALITY_DELTA 0.0000001
 

@@ -247,7 +247,7 @@ int main()
         g.PrintAllTraits();
 
         printf("Generation: %d, best fitness: %3.5f\n", k, bestf);
-        printf("Species: %d\n", pop.m_Species.size());
+        printf("Species: %lu\n", pop.m_Species.size());
         pop.Epoch();
     }
 
