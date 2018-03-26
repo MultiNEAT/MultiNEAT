@@ -948,6 +948,11 @@ namespace NEAT
         }
 #endif
     }
-    
+
+    void Species::Clear()
+    {
+        m_Individuals.clear();
+    }
+
 } // namespace NEAT
 

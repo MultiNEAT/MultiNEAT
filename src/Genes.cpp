@@ -403,4 +403,21 @@ bool operator==(const NeuronGene &a_lhs, const NeuronGene &a_rhs)
            (a_lhs.m_Bias == a_rhs.m_Bias) &&
            (a_lhs.m_ActFunction == a_rhs.m_ActFunction);
 }
+
+NeuronGene::NeuronGene(NeuronType a_type, int a_id, double a_splity)
+{
+    m_ID = a_id;
+    m_Type = a_type;
+    m_SplitY = a_splity;
+
+    // Initialize the node specific parameters
+    m_A = 0.0f;
+    m_B = 0.0f;
+    m_TimeConstant = 0.0f;
+    m_Bias = 0.0f;
+    m_ActFunction = UNSIGNED_SIGMOID;
+
+    x = 0;
+    y = 0;
+}
 }
