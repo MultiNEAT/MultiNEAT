@@ -121,19 +121,26 @@ def getbest(i):
         if best > 15.0:
             break
 
-    return generations
+    net = NEAT.NeuralNetwork()
+    pop.GetBestGenome().BuildPhenotype(net)
+
+    img = NEAT.viz.Draw(net)
+    cv2.imshow("current best", img)
+    cv2.waitKey(1)
+    
+    return generations, net.NumHiddenNeurons(), net.NumConnections()
 
 
 gens = []
 for run in range(100):
     curtime = time.time()
 
-    gen = getbest(run)
+    gen, nodes, connections = getbest(run)
     gens += [gen]
 
     elapsed = time.time() - curtime
     elapsedPerGen = (elapsed / gen) * 1000
-    print('Run:', run, 'Generations to solve XOR:', gen, '| in %3.2f ms per gen, %3.4f s total' % (elapsedPerGen, elapsed))
+    print('Run:', run, 'Generations to solve XOR:', gen, '| in %3.2f ms per gen, %3.4f s total' % (elapsedPerGen, elapsed), "complexity ({}, {})".format(nodes, connections))
 avg_gens = sum(gens) / len(gens)
 
 print('All:', gens)
