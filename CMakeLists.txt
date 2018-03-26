@@ -41,10 +41,10 @@ set(SOURCE_FILES
     src/Species.h
     src/Substrate.cpp
     src/Substrate.h
-    src/Utils.cpp
-    src/Utils.h
+    src/Traits.cpp
     src/Traits.h
-    src/Traits.cpp)
+    src/Utils.cpp
+    src/Utils.h)
 
 
 add_executable(MultiNEAT ${SOURCE_FILES})
