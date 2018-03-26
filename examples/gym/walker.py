@@ -135,6 +135,7 @@ def main():
     maxf_ever = 0
 
     env = gym.make('BipedalWalker-v2')
+    print('Starting training...')
 
     try:
         for generation in range(generations):
