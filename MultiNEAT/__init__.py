@@ -1,5 +1,5 @@
 import time
-from concurrent.futures import ProcessPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor, as_completed
 from ._MultiNEAT import *
 from .viz import *
 
