@@ -1,6 +1,8 @@
 
+REM show test env before latering it
+set
 
-python "%SRC_DIR%/examples/TestTraits.py"
-REM python "%SRC_DIR%/examples/NoveltySearch.py"
-python "%SRC_DIR%/examples/TestNEAT_xor.py"
-python "%SRC_DIR%/examples/TestHyperNEAT_xor.py"
+%PYTHON% "%SRC_DIR%/examples/TestTraits.py"
+REM %PYTHON% "%SRC_DIR%/examples/NoveltySearch.py"
+%PYTHON% "%SRC_DIR%/examples/TestNEAT_xor.py"
+%PYTHON% "%SRC_DIR%/examples/TestHyperNEAT_xor.py"
