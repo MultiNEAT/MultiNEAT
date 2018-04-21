@@ -85,7 +85,6 @@ def getExtensions():
         if is_python_2:
             raise RuntimeError("Python prior to version 3 is not supported on Windows due to limits of VC++ compiler version")
 
-    print("python_version_string", python_version_string)
     libs = ['boost_system', 'boost_serialization',
             'boost_python' + python_version_string, "boost_numpy" + python_version_string]
 

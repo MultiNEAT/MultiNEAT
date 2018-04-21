@@ -19,15 +19,30 @@ GNU Lesser General Public License v3.0
 ### Documentation
 [http://multineat.com/docs.html](http://multineat.com/docs.html)
 
-#### To compile
+#### To install
 
-* Set the required system (boost or cython) by setting an evironment variable with name MN_BUILD.
-Example in Linux:
+Right now prebuild mulitneat is available from anton.matosov personal Conda channel and dependencies from conda-forge channel:
+
   ```bash
-  export MN_BUILD=boost
+  conda install multineat -c anton.matosov -c conda-forge
   ```
 
-* then, the usual:
+Supported configurations:
+  - linux-x64: py27, py35, py36
+  - osx-x64: py27, py35, py36
+  - win-32: py35, py36
+  - win-64: py35, py36
+
+Build MultiNEAT on Windows with python 2.7 is not possible, becuase it uses super old compiler from VS2008 that doesn't support C++11 features used in the MultiNEAT library.
+
+##### P.S.
+
+Conda-forge recipe is in review and will be merged soon. This will allow to install from conda-forge channel directly, without using Anton's personal one.
+
+#### To compile
+
+From now on only boost-python bindings are supported. So make sure to install boost and boost-python (e.g. from conda-forge) and as usual:
+
   ```bash
   python setup.py build_ext
   python setup.py install
