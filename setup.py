@@ -76,57 +76,24 @@ def getExtensions():
     if prefix and len(prefix) > 0:
         extra += ["-I{}/include".format(prefix)]
 
-    build_sys = os.getenv('MN_BUILD')
+    is_python_2 = sys.version_info[0] < 3
+    python_version_string = "{}{}".format(sys.version_info[0], sys.version_info[1])
 
-    if build_sys is None:
-        if os.path.exists('_MultiNEAT.cpp'):
-            sources.insert(0, '_MultiNEAT.cpp')
-            extra.append('-O3')
-            extensionsList.extend([Extension('MultiNEAT._MultiNEAT',
-                                             sources,
-                                             extra_compile_args=extra)],
-                                  )
-        else:
-            print('Source file is missing and MN_BUILD environment variable is not set.\n'
-                  'Specify either \'cython\' or \'boost\'. Example to build in Linux with Cython:\n'
-                  '\t$ export MN_BUILD=cython')
-            exit(1)
-    elif build_sys == 'cython':
-        from Cython.Build import cythonize
-        sources.insert(0, '_MultiNEAT.pyx')
-        extra.append('-O3')
-        extensionsList.extend(cythonize([Extension('MultiNEAT._MultiNEAT',
-                                                   sources,
-                                                   extra_compile_args=extra)],
-                                        ))
-    elif build_sys == 'boost':
-        is_python_2 = sys.version_info[0] < 3
+    sources.insert(0, 'src/PythonBindings.cpp')
 
-        sources.insert(0, 'src/PythonBindings.cpp')
-
-        if is_windows:
-            if is_python_2:
-                raise RuntimeError("Python prior to version 3 is not supported on Windows due to limits of VC++ compiler version")
-
-        libs = ['boost_system', 'boost_serialization']
+    if is_windows:
         if is_python_2:
-            libs += ['boost_python', "boost_numpy"]
-        else:
-            libs += ['boost_python3', "boost_numpy3"]  # in Ubuntu 14 there is only 'boost_python-py34'
+            raise RuntimeError("Python prior to version 3 is not supported on Windows due to limits of VC++ compiler version")
 
-        # for Windows with mingw
-        # libraries= ['libboost_python-mgw48-mt-1_58',
-        #            'libboost_serialization-mgw48-mt-1_58'],
-        # include_dirs = ['C:/MinGW/include', 'C:/Users/Peter/Desktop/boost_1_58_0'],
-        # library_dirs = ['C:/MinGW/lib', 'C:/Users/Peter/Desktop/boost_1_58_0/stage/lib'],
-        extra.extend(['-DUSE_BOOST_PYTHON', '-DUSE_BOOST_RANDOM'])
-        extensionsList.append(Extension('MultiNEAT._MultiNEAT',
-                                        sources,
-                                        libraries=libs,
-                                        extra_compile_args=extra)
-                              )
-    else:
-        raise AttributeError('Unknown tool: {}'.format(build_sys))
+    print("python_version_string", python_version_string)
+    libs = ['boost_system', 'boost_serialization',
+            'boost_python' + python_version_string, "boost_numpy" + python_version_string]
+
+    extra.extend(['-DUSE_BOOST_PYTHON'])
+    extensionsList.append(Extension('MultiNEAT._MultiNEAT',
+                                    sources,
+                                    libraries=libs,
+                                    extra_compile_args=extra))
 
     return extensionsList
 
