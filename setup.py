@@ -98,6 +98,6 @@ def getExtensions():
 
 
 setup(name='multineat',
-      version='0.5', # Update version in conda/meta.yaml as well
+      version='0.5.2', # Update version in conda/meta.yaml as well
       packages=['MultiNEAT'],
       ext_modules=getExtensions())
