@@ -2,11 +2,11 @@
 |-----------------|---------------------|
 | [![Build Status](https://travis-ci.org/MultiNEAT/MultiNEAT.svg?branch=master)](https://travis-ci.org/MultiNEAT/MultiNEAT) | ![Build Status](https://ci.appveyor.com/api/projects/status/yips7ifgdqfqvabt/branch/master?svg=true&passingText=master%20-%20OK) |
 
-[![Conda Status](https://anaconda.org/anton.matosov/multineat/badges/version.svg)](https://anaconda.org/anton.matosov/multineat)
+[![Conda Version](https://anaconda.org/anton.matosov/multineat/badges/version.svg)](https://anaconda.org/anton.matosov/multineat)
 
 [![Conda Platforms](https://anaconda.org/anton.matosov/multineat/badges/platforms.svg)](https://anaconda.org/anton.matosov/multineat)
 
-[![Anaconda-Server Badge](https://anaconda.org/anton.matosov/multineat/badges/installer/conda.svg)](https://conda.anaconda.org/anton.matosov/)
+[![Install with Conda](https://anaconda.org/anton.matosov/multineat/badges/installer/conda.svg)](https://anaconda.org/anton.matosov/multineat)
 
 # About MultiNEAT
 
