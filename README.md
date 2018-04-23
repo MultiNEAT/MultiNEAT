@@ -1,3 +1,9 @@
+| **`Linux and macOS`** | **`Windows`** |
+|-----------------|---------------------|
+| [![Build Status](https://travis-ci.org/MultiNEAT/MultiNEAT.svg?branch=master)](https://travis-ci.org/MultiNEAT/MultiNEAT) | ![Build Status](https://ci.appveyor.com/api/projects/status/yips7ifgdqfqvabt/branch/master?svg=true&passingText=master%20-%20OK) |
+
+
+
 # About MultiNEAT
 
 MultiNEAT is a portable software library for performing neuroevolution, a form of machine learning that
@@ -27,13 +33,15 @@ Right now prebuild mulitneat is available from anton.matosov personal Conda chan
   conda install multineat -c anton.matosov -c conda-forge
   ```
 
-Supported configurations:
-  - linux-x64: py27, py35, py36
-  - osx-x64: py27, py35, py36
-  - win-32: py35, py36
-  - win-64: py35, py36
+#### Supported configurations:
 
-Build MultiNEAT on Windows with python 2.7 is not possible, becuase it uses super old compiler from VS2008 that doesn't support C++11 features used in the MultiNEAT library.
+|                | **`Python 2.7`** | **`Python 3.5`** | **`Python 3.6`** |
+|---------------:|:----------------:|:----------------:|:----------------:|
+| **`Linux`**    |       👍         |       👍          |        👍        |
+| **`macOS`**    |       👍         |       👍          |        👍        |
+| **`Windows`**  |       👎         |       👍          |        👍        |
+
+Building MultiNEAT on Windows with python 2.7 is not possible, becuase it uses compiler from VS2008 that doesn't support C++11 features required by the library.
 
 ##### P.S.
 
