@@ -46,6 +46,7 @@ def getExtensions():
 
     extensionsList = []
     sources = ['src/Genome.cpp',
+               'src/Genes.cpp',
                'src/Innovation.cpp',
                'src/NeuralNetwork.cpp',
                'src/Parameters.cpp',
