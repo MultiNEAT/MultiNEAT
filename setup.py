@@ -88,7 +88,9 @@ def getExtensions():
     libs = ['boost_system', 'boost_serialization',
             'boost_python' + python_version_string, "boost_numpy" + python_version_string]
 
-    extra.extend(['-DUSE_BOOST_PYTHON'])
+    extra += ['-DUSE_BOOST_PYTHON']
+    extra += ['-DBOOST_ALL_NO_LIB'] # Do not autolink since we specify all libs manually and autolink is broken for boost-python 1.67.0 on Windows anyways
+
     extensionsList.append(Extension('MultiNEAT._MultiNEAT',
                                     sources,
                                     libraries=libs,
