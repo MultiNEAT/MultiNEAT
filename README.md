@@ -1,3 +1,19 @@
+
+Current build status
+====================
+| |  |
+| --- | --- |
+| Master branch | [![Linux and mac Build Status](https://img.shields.io/travis/MultiNEAT/MultiNEAT.svg?longCache=true&style=flat&label=Linux/macOS)](https://travis-ci.org/MultiNEAT/MultiNEAT) [![Windows Build Status](https://img.shields.io/appveyor/ci/anton-matosov/multineat-w3958/master.svg?longCache=true&style=flat&label=Windows)](https://ci.appveyor.com/project/anton-matosov/multineat-w3958) |
+| Conda-forge | [![Linux](https://img.shields.io/circleci/project/github/conda-forge/multineat-feedstock/master.svg?label=Linux)](https://circleci.com/gh/conda-forge/multineat-feedstock) [![OSX](https://img.shields.io/travis/conda-forge/multineat-feedstock/master.svg?label=macOS)](https://travis-ci.org/conda-forge/multineat-feedstock) [![Windows](https://img.shields.io/appveyor/ci/conda-forge/multineat-feedstock/master.svg?label=Windows)](https://ci.appveyor.com/project/conda-forge/multineat-feedstock/branch/master) |
+
+Current release info
+====================
+
+| Name | Downloads | Version | Platforms |
+| --- | --- | --- | --- |
+| [![Conda Recipe](https://img.shields.io/badge/recipe-multineat-green.svg)](https://anaconda.org/conda-forge/multineat) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/multineat.svg)](https://anaconda.org/conda-forge/multineat) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/multineat.svg)](https://anaconda.org/conda-forge/multineat) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/multineat.svg)](https://anaconda.org/conda-forge/multineat) |
+
+
 # About MultiNEAT
 
 MultiNEAT is a portable software library for performing neuroevolution, a form of machine learning that
@@ -19,15 +35,30 @@ GNU Lesser General Public License v3.0
 ### Documentation
 [http://multineat.com/docs.html](http://multineat.com/docs.html)
 
-#### To compile
+#### To install
 
-* Set the required system (boost or cython) by setting an evironment variable with name MN_BUILD.
-Example in Linux:
+Prebuilt MultiNEAT package is available from conda-forge:
+
   ```bash
-  export MN_BUILD=boost
+  conda install multineat -c conda-forge
   ```
 
-* then, the usual:
+Conda-forge feedstock recipe can be found [here](https://github.com/conda-forge/multineat-feedstock).
+
+#### Supported configurations:
+
+|                | **`Python 2.7`** | **`Python 3.5`** | **`Python 3.6`** |
+|---------------:|:----------------:|:----------------:|:----------------:|
+| **`Linux`**    |       👍         |       👍          |        👍        |
+| **`macOS`**    |       👍         |       👍          |        👍        |
+| **`Windows`**  |       👎         |       👍          |        👍        |
+
+Building MultiNEAT on Windows with python 2.7 is not possible, becuase it uses compiler from VS2008 that doesn't support C++11 features required by the library.
+
+#### To compile
+
+From now on only boost-python bindings are supported. So make sure to install boost and boost-python (e.g. from conda-forge) and as usual:
+
   ```bash
   python setup.py build_ext
   python setup.py install
