@@ -26,7 +26,7 @@ params.MinSpecies = 2
 params.MaxSpecies = 4
 params.RouletteWheelSelection = False
 params.Elitism = True
-params.RecurrentProb = 0.15
+params.RecurrentProb = 0.35
 params.OverallMutationRate = 0.2
 
 params.MutateWeightsProb = 0.8
@@ -71,7 +71,7 @@ params.MutateLinkTraitsProb = 0
 
 
 trials = 15
-max_generations = 20
+max_generations = 45
 ticks_per_trial = 300
 render_during_training = False
 
