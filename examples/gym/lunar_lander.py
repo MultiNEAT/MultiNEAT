@@ -139,22 +139,20 @@ def evaluate(genome):
     avg_reward = 0
 
     for trial in range(trials):
-
         avg_reward += do_trial(net)
 
     avg_reward /= trials
 
     #print(avg_reward)
-
-    genome.SetFitness(1000000 + avg_reward)
-    return avg_reward
+    return 1000000 + avg_reward
 
 try:
 
     for generation in range(max_generations):
         genome_list = NEAT.GetGenomeList(pop)
-        fitness_list = EvaluateGenomeList_Serial(genome_list, evaluate, display=False)
-        # NEAT.ZipFitness(genome_list, fitness_list)
+        fitness_list = EvaluateGenomeList_Parallel(genome_list, evaluate, display=False)
+        NEAT.ZipFitness(genome_list, fitness_list)
+
         maxf = max(fitness_list)
 
         # for i_episode, genome in enumerate(NEAT.GetGenomeList(pop)):
