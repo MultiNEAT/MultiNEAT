@@ -39,7 +39,7 @@ def getExtensions():
         'src/Parameters.cpp',
         'src/PhenotypeBehavior.cpp',
         'src/Population.cpp',
-        'src/PythonBindings.cpp'
+        'src/PythonBindings.cpp',
         'src/Random.cpp',
         'src/Species.cpp',
         'src/Substrate.cpp',
