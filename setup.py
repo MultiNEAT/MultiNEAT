@@ -31,17 +31,20 @@ def getExtensions():
     platform = sys.platform
 
     extensionsList = []
-    sources = ['src/Genome.cpp',
-               'src/Genes.cpp',
-               'src/Innovation.cpp',
-               'src/NeuralNetwork.cpp',
-               'src/Parameters.cpp',
-               'src/PhenotypeBehavior.cpp',
-               'src/Population.cpp',
-               'src/Random.cpp',
-               'src/Species.cpp',
-               'src/Substrate.cpp',
-               'src/Utils.cpp']
+    sources = [
+        'src/Genes.cpp',
+        'src/Genome.cpp',
+        'src/Innovation.cpp',
+        'src/NeuralNetwork.cpp',
+        'src/Parameters.cpp',
+        'src/PhenotypeBehavior.cpp',
+        'src/Population.cpp',
+        'src/PythonBindings.cpp'
+        'src/Random.cpp',
+        'src/Species.cpp',
+        'src/Substrate.cpp',
+        'src/Utils.cpp',
+    ]
 
     extra = ['-march=native',
              '-g'
@@ -65,8 +68,6 @@ def getExtensions():
 
     is_python_2 = sys.version_info[0] < 3
     python_version_string = "{}{}".format(sys.version_info[0], sys.version_info[1])
-
-    sources.insert(0, 'src/PythonBindings.cpp')
 
     if is_windows:
         if is_python_2:
