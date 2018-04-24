@@ -64,15 +64,16 @@ def static_vars(**kwargs):
         return func
     return decorate
 
-def EvaluateSerial(population, evaluator):
+def EvaluateSerial(population, evaluator, display=False, show_elapsed=False):
     genome_list = GetGenomeList(population)
-    fitness_list = EvaluateGenomeList_Serial(genome_list, evaluator, display=False)
+    fitness_list = EvaluateGenomeList_Serial(genome_list, evaluator, display=display, show_elapsed=show_elapsed)
     ZipFitness(genome_list, fitness_list)
     return fitness_list
 
-def EvaluateParallel(population, evaluator):
+def EvaluateParallel(population, evaluator,
+                                cores=None, display=False, ipython_client=None):
     genome_list = GetGenomeList(population)
-    fitness_list = EvaluateGenomeList_Parallel(genome_list, evaluator, display=False)
+    fitness_list = EvaluateGenomeList_Parallel(genome_list, evaluator, cores=cores, display=display, ipython_client=ipython_client)
     ZipFitness(genome_list, fitness_list)
     return fitness_list
 
@@ -82,7 +83,7 @@ def EvaluateParallel(population, evaluator):
 # returns a list of corresponding fitness values.
 # evaluator is a callable that is supposed to take Genome as argument and
 # return a double
-def EvaluateGenomeList_Serial(genome_list, evaluator, display=True, show_elapsed=False):
+def EvaluateGenomeList_Serial(genome_list, evaluator, display=False, show_elapsed=False):
     fitnesses = []
     count = 0
 
@@ -121,7 +122,7 @@ def EvaluateGenomeList_Serial(genome_list, evaluator, display=True, show_elapsed
 # evaluator is a callable that is supposed to take Genome as argument and return a double
 @static_vars(executor=None)
 def EvaluateGenomeList_Parallel(genome_list, evaluator,
-                                cores=None, display=True, ipython_client=None):
+                                cores=None, display=False, ipython_client=None):
     ''' If ipython_client is None, will use concurrent.futures. 
     Pass an instance of Client() in order to use an IPython cluster '''
     fitnesses = []
