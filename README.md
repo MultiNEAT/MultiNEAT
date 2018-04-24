@@ -1,12 +1,18 @@
-| **`Linux and macOS`** | **`Windows`** |
-|-----------------|---------------------|
-| [![Build Status](https://travis-ci.org/MultiNEAT/MultiNEAT.svg?branch=master)](https://travis-ci.org/MultiNEAT/MultiNEAT) | [![Build Status](https://ci.appveyor.com/api/projects/status/yips7ifgdqfqvabt/branch/master?svg=true&passingText=master%20-%20OK)](https://ci.appveyor.com/project/anton-matosov/multineat-w3958) |
 
-[![Conda Version](https://anaconda.org/anton.matosov/multineat/badges/version.svg)](https://anaconda.org/anton.matosov/multineat)
+Current build status
+====================
+| |  |
+| --- | --- |
+| Master branch | [![Linux and mac Build Status](https://img.shields.io/travis/MultiNEAT/MultiNEAT.svg?longCache=true&style=flat&label=Linux/macOS)](https://travis-ci.org/MultiNEAT/MultiNEAT) [![Windows Build Status](https://img.shields.io/appveyor/ci/anton-matosov/multineat-w3958/master.svg?longCache=true&style=flat&label=Windows)](https://ci.appveyor.com/project/anton-matosov/multineat-w3958) |
+| Conda-forge | [![Linux](https://img.shields.io/circleci/project/github/conda-forge/multineat-feedstock/master.svg?label=Linux)](https://circleci.com/gh/conda-forge/multineat-feedstock) [![OSX](https://img.shields.io/travis/conda-forge/multineat-feedstock/master.svg?label=macOS)](https://travis-ci.org/conda-forge/multineat-feedstock) [![Windows](https://img.shields.io/appveyor/ci/conda-forge/multineat-feedstock/master.svg?label=Windows)](https://ci.appveyor.com/project/conda-forge/multineat-feedstock/branch/master) |
 
-[![Conda Platforms](https://anaconda.org/anton.matosov/multineat/badges/platforms.svg)](https://anaconda.org/anton.matosov/multineat)
+Current release info
+====================
 
-[![Install with Conda](https://anaconda.org/anton.matosov/multineat/badges/installer/conda.svg)](https://anaconda.org/anton.matosov/multineat)
+| Name | Downloads | Version | Platforms |
+| --- | --- | --- | --- |
+| [![Conda Recipe](https://img.shields.io/badge/recipe-multineat-green.svg)](https://anaconda.org/conda-forge/multineat) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/multineat.svg)](https://anaconda.org/conda-forge/multineat) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/multineat.svg)](https://anaconda.org/conda-forge/multineat) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/multineat.svg)](https://anaconda.org/conda-forge/multineat) |
+
 
 # About MultiNEAT
 
@@ -31,11 +37,13 @@ GNU Lesser General Public License v3.0
 
 #### To install
 
-Right now prebuild mulitneat is available from anton.matosov personal Conda channel and dependencies from conda-forge channel:
+Prebuilt MultiNEAT package is available from conda-forge:
 
   ```bash
-  conda install multineat -c anton.matosov -c conda-forge
+  conda install multineat -c conda-forge
   ```
+
+Conda-forge feedstock recipe can be found [here](https://github.com/conda-forge/multineat-feedstock).
 
 #### Supported configurations:
 
@@ -46,10 +54,6 @@ Right now prebuild mulitneat is available from anton.matosov personal Conda chan
 | **`Windows`**  |       👎         |       👍          |        👍        |
 
 Building MultiNEAT on Windows with python 2.7 is not possible, becuase it uses compiler from VS2008 that doesn't support C++11 features required by the library.
-
-##### P.S.
-
-Conda-forge recipe is in review and will be merged soon. This will allow to install from conda-forge channel directly, without using Anton's personal one.
 
 #### To compile
 
