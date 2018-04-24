@@ -27,20 +27,6 @@ import distutils.ccompiler
 distutils.ccompiler.CCompiler.compile=parallelCCompile
 
 
-''' Note:
-
-to build Boost.Python on Windows with mingw
-
-bjam target-os=windows/python=3.4 toolset=gcc variant=debug,release link=static,shared threading=multi runtime-link=shared cxxflags="-include cmath "
-
-
-also insert this on top of boost/python.hpp :
-
-#include <cmath>   //fix  cmath:1096:11: error: '::hypot' has not been declared
-
-'''
-
-
 def getExtensions():
     platform = sys.platform
 
