@@ -26,7 +26,7 @@ params.MinSpecies = 2
 params.MaxSpecies = 4
 params.RouletteWheelSelection = False
 params.Elitism = True
-params.RecurrentProb = 0.35
+params.RecurrentProb = 0.15
 params.OverallMutationRate = 0.2
 
 params.MutateWeightsProb = 0.8
@@ -45,7 +45,7 @@ params.MaxWeight = 8
 
 params.MutateAddNeuronProb = 0.1
 params.MutateAddLinkProb = 0.2
-params.MutateRemLinkProb = 0.0
+params.MutateRemLinkProb = 0.05
 
 params.MinActivationA  = 1.0
 params.MaxActivationA  = 6.0
