@@ -1,6 +1,6 @@
 | **`Linux and macOS`** | **`Windows`** |
 |-----------------|---------------------|
-| [![Build Status](https://travis-ci.org/MultiNEAT/MultiNEAT.svg?branch=master)](https://travis-ci.org/MultiNEAT/MultiNEAT) | ![Build Status](https://ci.appveyor.com/api/projects/status/yips7ifgdqfqvabt/branch/master?svg=true&passingText=master%20-%20OK) |
+| [![Build Status](https://travis-ci.org/MultiNEAT/MultiNEAT.svg?branch=master)](https://travis-ci.org/MultiNEAT/MultiNEAT) | [![Build Status](https://ci.appveyor.com/api/projects/status/yips7ifgdqfqvabt/branch/master?svg=true&passingText=master%20-%20OK)](https://ci.appveyor.com/project/anton-matosov/multineat-w3958) |
 
 [![Conda Version](https://anaconda.org/anton.matosov/multineat/badges/version.svg)](https://anaconda.org/anton.matosov/multineat)
 
