@@ -9,8 +9,6 @@ import pickle
 import numpy as np
 import cv2
 
-from MultiNEAT import EvaluateGenomeList_Serial, EvaluateGenomeList_Parallel, GetGenomeList, ZipFitness
-
 rng = NEAT.RNG()
 rng.TimeSeed()
 
@@ -149,16 +147,9 @@ def evaluate(genome):
 try:
 
     for generation in range(max_generations):
-        genome_list = NEAT.GetGenomeList(pop)
-        fitness_list = EvaluateGenomeList_Parallel(genome_list, evaluate, display=False)
-        NEAT.ZipFitness(genome_list, fitness_list)
+        fitness_list = NEAT.EvaluateParallel(pop, evaluate)
 
         maxf = max(fitness_list)
-
-        # for i_episode, genome in enumerate(NEAT.GetGenomeList(pop)):
-        #     evaluate(genome)            
-        # maxf = max([x.GetFitness() for x in NEAT.GetGenomeList(pop)])
-
 
         print('Generation: {}/{}, max fitness: {}'.format(generation, max_generations - 1, maxf))
 

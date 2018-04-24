@@ -14,8 +14,9 @@ def GetGenomeList(pop):
 
 # Just set the fitness values to the genomes
 def ZipFitness(genome_list, fitness_list):
-    [genome.SetFitness(fitness) for genome, fitness in zip(genome_list, fitness_list)]
-    [genome.SetEvaluated() for genome in genome_list]
+    for genome, fitness in zip(genome_list, fitness_list):
+        genome.SetFitness(fitness)
+        genome.SetEvaluated()
 
 try:
     import networkx as nx
@@ -63,7 +64,19 @@ def static_vars(**kwargs):
         return func
     return decorate
 
-@static_vars(counter=0)
+def EvaluateSerial(population, evaluator):
+    genome_list = GetGenomeList(population)
+    fitness_list = EvaluateGenomeList_Serial(genome_list, evaluator, display=False)
+    ZipFitness(genome_list, fitness_list)
+    return fitness_list
+
+def EvaluateParallel(population, evaluator):
+    genome_list = GetGenomeList(population)
+    fitness_list = EvaluateGenomeList_Parallel(genome_list, evaluator, display=False)
+    ZipFitness(genome_list, fitness_list)
+    return fitness_list
+
+
 
 # Evaluates all genomes in sequential manner (using only 1 process) and
 # returns a list of corresponding fitness values.
