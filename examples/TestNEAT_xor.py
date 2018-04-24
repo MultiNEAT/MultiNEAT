@@ -7,6 +7,7 @@ import sys
 import time
 import random as rnd
 import numpy as np
+import cv2
 import pickle as pickle
 import MultiNEAT as NEAT
 from MultiNEAT import EvaluateGenomeList_Serial, EvaluateGenomeList_Parallel
@@ -125,9 +126,9 @@ def getbest(i):
     net = NEAT.NeuralNetwork()
     pop.GetBestGenome().BuildPhenotype(net)
 
-    img = NEAT.viz.Draw(net)
-    cv2.imshow("current best", img)
-    cv2.waitKey(1)
+    # img = NEAT.viz.Draw(net)
+    # cv2.imshow("current best", img)
+    # cv2.waitKey(1)
     
     return generations, net.NumHiddenNeurons(), net.NumConnections()
 
