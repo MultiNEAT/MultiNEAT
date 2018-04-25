@@ -137,6 +137,8 @@ params.MutateLinkTraitsProb = 0
 
 params.AllowLoops = False
 
+max_generations = 2000
+
 def getbest(i):
     g = NEAT.Genome(0,
                     substrate.GetMinCPPNInputs(),
@@ -151,7 +153,7 @@ def getbest(i):
     pop = NEAT.Population(g, params, True, 1.0, i)
     pop.RNG.Seed(i)
 
-    for generation in range(2000):
+    for generation in range(max_generations):
         genome_list = NEAT.GetGenomeList(pop)
         # if sys.platform == 'linux':
         #    fitnesses = EvaluateGenomeList_Parallel(genome_list, evaluate, display=False)
@@ -159,7 +161,12 @@ def getbest(i):
         fitnesses = EvaluateGenomeList_Serial(genome_list, evaluate, display=False)
         [genome.SetFitness(fitness) for genome, fitness in zip(genome_list, fitnesses)]
 
-        print('Gen: %d Best: %3.5f' % (generation, max(fitnesses)))
+        net = NEAT.NeuralNetwork()
+        pop.GetBestGenome().BuildPhenotype(net)
+
+        complexity = "complexity ({}, {})".format(net.NumHiddenNeurons(), net.NumConnections())
+        print('Gen: %d/%d Best: %3.5f. %s' % (generation, max_generations - 1, max(fitnesses), complexity))
+        
 
         best = max(fitnesses)
 
