@@ -103,11 +103,14 @@ params.SetGenomeTraitParameters('gn', trait4)
 # the custom constraint
 params.CustomConstraints = custom_constraint
 
+max_generations = 100
+
 # the seed genome and test population
 g = NEAT.Genome(0, 3, 0, 1, False, NEAT.ActivationFunction.UNSIGNED_SIGMOID,
                 NEAT.ActivationFunction.UNSIGNED_SIGMOID, 0, params, 0)
 pop = NEAT.Population(g, params, True, 1.0, rnd.randint(0, 100))
 pop.RNG.Seed(int(time.clock()*100))
+
 
 def PrintGenomeTraits(g):
     print('Genome:')
@@ -141,17 +144,15 @@ def PrintGenomeTraits(g):
         print()
     print()
 
-for generation in range(100):
+for generation in range(max_generations):
 
     genome_list = NEAT.GetGenomeList(pop)
     fitness_list = NEAT.EvaluateGenomeList_Serial(genome_list, evaluate, display=False)
     NEAT.ZipFitness(genome_list, fitness_list)
 
-    PrintGenomeTraits( pop.GetBestGenome() )
-    print()
-    print('Fitnesss:', max(fitness_list), 'Generation:', generation)
-    print()
-
+    # PrintGenomeTraits( pop.GetBestGenome() )
+    print('Traits. Gen: %d/%d Best: %3.5f' % (generation, max_generations - 1, max(fitness_list)))
+    
     pop.Epoch()
 
 

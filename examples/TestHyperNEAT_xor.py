@@ -162,7 +162,7 @@ def getbest(i):
         fitnesses = EvaluateGenomeList_Serial(genome_list, evaluate, display=False)
         [genome.SetFitness(fitness) for genome, fitness in zip(genome_list, fitnesses)]
 
-        print('Gen: %d/%d Best: %3.5f' % (generation, max_generations - 1, max(fitnesses)))
+        print('HyperNEAT_xor. Gen: %d/%d Best: %3.5f' % (generation, max_generations - 1, max(fitnesses)))
 
 
         best = max(fitnesses)
@@ -180,8 +180,8 @@ gens = []
 for run in range(max_runs):
     gen = getbest(run)
     gens += [gen]
-    print('Run: {}/{}'.format(run, max_runs - 1), 'Generations to solve XOR:', gen)
+    print('HyperNEAT_xor. Run: {}/{}'.format(run, max_runs - 1), 'Generations to solve XOR:', gen)
 avg_gens = sum(gens) / len(gens)
 
-print('All:', gens)
-print('Average:', avg_gens)
+print('HyperNEAT_xor. All:', gens)
+print('HyperNEAT_xor. Average:', avg_gens)
