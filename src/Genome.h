@@ -186,9 +186,14 @@ namespace NEAT
         Genome(std::ifstream &a_DataFile);
     
         // This creates a CTRNN fully-connected genome
-        Genome(unsigned int a_ID, unsigned int a_NumInputs, unsigned int a_NumHidden, unsigned int a_NumOutputs,
-               ActivationFunction a_OutputActType, ActivationFunction a_HiddenActType, const Parameters &a_Parameters);
-    
+        Genome(unsigned int a_ID,
+                unsigned int a_NumInputs,
+                unsigned int a_NumHidden,
+                unsigned int a_NumOutputs,
+                ActivationFunction a_OutputActType,
+                ActivationFunction a_HiddenActType,
+                const Parameters &a_Parameters);
+
         // This creates a standart minimal genome - perceptron-like structure
         Genome(unsigned int a_ID,
                unsigned int a_NumInputs,
