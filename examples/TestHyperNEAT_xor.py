@@ -137,7 +137,8 @@ params.MutateLinkTraitsProb = 0
 
 params.AllowLoops = False
 
-max_generations = 2000
+max_runs = 10
+max_generations = 400
 
 def getbest(i):
     g = NEAT.Genome(0,
@@ -176,10 +177,10 @@ def getbest(i):
 
 
 gens = []
-for run in range(20):
+for run in range(max_runs):
     gen = getbest(run)
     gens += [gen]
-    print('Run:', run, 'Generations to solve XOR:', gen)
+    print('Run: {}/{}'.format(run, max_runs - 1), 'Generations to solve XOR:', gen)
 avg_gens = sum(gens) / len(gens)
 
 print('All:', gens)
