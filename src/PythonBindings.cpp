@@ -200,7 +200,9 @@ BOOST_PYTHON_MODULE(_MultiNEAT)
             .def("SetInputOutputDimentions",
             &NeuralNetwork::SetInputOutputDimentions)
 
-            .def("GetTotalConnectionLength", &NeuralNetwork::GetTotalConnectionLength)
+            .def("NumConnections", &NeuralNetwork::NumConnections)
+            .def("NumNeurons", &NeuralNetwork::NumNeurons)
+            .def("NumHiddenNeurons", &NeuralNetwork::NumHiddenNeurons)
 
 
             .def_readwrite("neurons", &NeuralNetwork::m_neurons)
@@ -288,7 +290,7 @@ BOOST_PYTHON_MODULE(_MultiNEAT)
 ///////////////////////////////////////////////////////////////////
 
     class_<Species>("Species", init<Genome, int>())
-            .def("GetLeader", &Species::GetLeader)
+            .def("GetLeader", &Species::GetLeader, return_value_policy<copy_const_reference>())
             .def("NumIndividuals", &Species::NumIndividuals)
             .def("GensNoImprovement", &Species::GensNoImprovement)
             .def("ID", &Species::ID)

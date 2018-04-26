@@ -166,11 +166,15 @@ public:
     // accessor methods
     void AddNeuron(const Neuron& a_n) { m_neurons.push_back( a_n ); }
     void AddConnection(const Connection& a_c) { m_connections.push_back( a_c ); }
-    Connection GetConnectionByIndex(unsigned int a_idx) const
+    
+    void ReserveNeuronsMemory(const size_t capacity) { m_neurons.reserve( capacity ); }
+    void ReserveConnectionsMemory(const size_t capacity) { m_connections.reserve( capacity ); }
+
+    const Connection& GetConnectionByIndex(unsigned int a_idx) const
     {
         return m_connections[a_idx];
     }
-    Neuron GetNeuronByIndex(unsigned int a_idx) const
+    const Neuron& GetNeuronByIndex(unsigned int a_idx) const
     {
         return m_neurons[a_idx];
     }
@@ -179,13 +183,27 @@ public:
         m_num_inputs = a_i;
         m_num_outputs = a_o;
     }
-    unsigned int NumInputs() const
+
+    size_t NumInputs() const
     {
         return m_num_inputs;
     }
-    unsigned int NumOutputs() const
+    size_t NumOutputs() const
     {
         return m_num_outputs;
+    }
+
+    size_t NumConnections()
+    {
+        return m_connections.size();
+    }
+    size_t NumNeurons()
+    {
+        return m_neurons.size();
+    }
+    size_t NumHiddenNeurons()
+    {
+        return NumNeurons() - NumInputs() - NumOutputs();
     }
 
     // clears the network and makes it a minimal one
@@ -198,18 +216,14 @@ public:
     }
 
     double GetConnectionLenght(Neuron source, Neuron target)
-    {   double dist = 0.0;
+    {
+        double dist = 0.0;
         for (unsigned int i = 0; i < source.m_substrate_coords.size(); i++)
         {
             dist += (target.m_substrate_coords[i] - source.m_substrate_coords[i]) *
             		(target.m_substrate_coords[i] - source.m_substrate_coords[i] );
         }
         return dist;
-    }
-
-    double GetTotalConnectionLength()
-    {
-        return m_connections.size();
     }
 
     // one-shot save/load

@@ -102,8 +102,13 @@ public:
     // initializes a species with a leader genome and an ID number
     Species(const Genome& a_Seed, int a_id);
 
-    // assignment operator
-    Species& operator=(const Species& a_g);
+    // assignment 
+    Species(const Species&) = default;
+    Species& operator=(const Species& a_g) = default;
+    
+    // move
+    Species(Species&&) = default;
+    Species& operator=(Species&&) = default;
 
     // comparison operator (nessesary for boost::python)
     // todo: implement a better comparison technique
@@ -142,18 +147,18 @@ public:
     void SetRepresentative(Genome& a_G) { m_Representative = a_G; }
 
     // returns the leader (the member having the best fitness, representing the species)
-    Genome GetLeader() const;
+    const Genome& GetLeader() const;
 
-    Genome GetRepresentative() const;
+    const Genome& GetRepresentative() const;
 
     // adds a new member to the species and updates variables
     void AddIndividual(Genome& a_New);
 
     // returns an individual randomly selected from the best N%
-    Genome GetIndividual(Parameters& a_Parameters, RNG& a_RNG) const;
+    const Genome& GetIndividual(Parameters& a_Parameters, RNG& a_RNG) const;
 
     // returns a completely random individual
-    Genome GetRandomIndividual(RNG& a_RNG) const;
+    const Genome& GetRandomIndividual(RNG& a_RNG) const;
 
     // calculates how many babies this species will spawn in total
     void CountOffspring();
@@ -181,11 +186,7 @@ public:
     void MutateGenome( bool t_baby_is_clone, Population &a_Pop, Genome &t_baby, Parameters& a_Parameters, RNG& a_RNG);
 
     // Removes all individuals
-    void Clear()
-    {
-        m_Individuals.clear();
-    }
-
+    void Clear();
 
 
     ////////////////////////////////////////
@@ -202,6 +203,12 @@ public:
     void RemoveIndividual(unsigned int a_idx);
 };
 
+    static inline void swap(Species &a, Species &b)
+    {
+        Species c(std::move(a));
+        a = std::move(b);
+        b = std::move(c);
+    }
 } // namespace NEAT
 
 #endif

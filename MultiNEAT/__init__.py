@@ -1,8 +1,7 @@
 import time
-from concurrent.futures import ProcessPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor, as_completed
 from ._MultiNEAT import *
 from .viz import *
-
 
 # Get all genomes from the population
 def GetGenomeList(pop):
@@ -15,8 +14,9 @@ def GetGenomeList(pop):
 
 # Just set the fitness values to the genomes
 def ZipFitness(genome_list, fitness_list):
-    [genome.SetFitness(fitness) for genome, fitness in zip(genome_list, fitness_list)]
-    [genome.SetEvaluated() for genome in genome_list]
+    for genome, fitness in zip(genome_list, fitness_list):
+        genome.SetFitness(fitness)
+        genome.SetEvaluated()
 
 try:
     import networkx as nx
@@ -56,12 +56,34 @@ try:
 except:
     pbar_installed = False
 
+def static_vars(**kwargs):
+    """ A little helper that allows to add static vars to functions """
+    def decorate(func):
+        for k in kwargs:
+            setattr(func, k, kwargs[k])
+        return func
+    return decorate
+
+def EvaluateSerial(population, evaluator, display=False, show_elapsed=False):
+    genome_list = GetGenomeList(population)
+    fitness_list = EvaluateGenomeList_Serial(genome_list, evaluator, display=display, show_elapsed=show_elapsed)
+    ZipFitness(genome_list, fitness_list)
+    return fitness_list
+
+def EvaluateParallel(population, evaluator,
+                                cores=None, display=False, ipython_client=None):
+    genome_list = GetGenomeList(population)
+    fitness_list = EvaluateGenomeList_Parallel(genome_list, evaluator, cores=cores, display=display, ipython_client=ipython_client)
+    ZipFitness(genome_list, fitness_list)
+    return fitness_list
+
+
 
 # Evaluates all genomes in sequential manner (using only 1 process) and
 # returns a list of corresponding fitness values.
 # evaluator is a callable that is supposed to take Genome as argument and
 # return a double
-def EvaluateGenomeList_Serial(genome_list, evaluator, display=True, show_elapsed=False):
+def EvaluateGenomeList_Serial(genome_list, evaluator, display=False, show_elapsed=False):
     fitnesses = []
     count = 0
 
@@ -98,21 +120,34 @@ def EvaluateGenomeList_Serial(genome_list, evaluator, display=True, show_elapsed
 # Evaluates all genomes in parallel manner (many processes) and returns a
 # list of corresponding fitness values.
 # evaluator is a callable that is supposed to take Genome as argument and return a double
+@static_vars(executor=None)
 def EvaluateGenomeList_Parallel(genome_list, evaluator,
-                                cores=8, display=True, ipython_client=None):
+                                cores=None, display=False, ipython_client=None):
     ''' If ipython_client is None, will use concurrent.futures. 
     Pass an instance of Client() in order to use an IPython cluster '''
     fitnesses = []
     curtime = time.time()
 
+    if not cores:
+        try:
+            import psutil
+            cores = psutil.cpu_count(logical=False)
+        except:
+            cores = 2
+    batch_size = min(100, int(len(genome_list) / cores))
     if ipython_client is None or not ipython_installed:
-        with ProcessPoolExecutor(max_workers=cores) as executor:
-            for i, fitness in enumerate(executor.map(evaluator, genome_list)):
-                fitnesses += [fitness]
+        
+        executor = EvaluateGenomeList_Parallel.executor
+        if not executor:
+            executor = ProcessPoolExecutor(max_workers=cores)
+            EvaluateGenomeList_Parallel.executor = executor
 
-                if display:
-                    if ipython_installed: clear_output(wait=True)
-                    print('Individuals: (%s/%s) Fitness: %3.4f' % (i, len(genome_list), fitness))
+        for i, fitness in enumerate(executor.map(evaluator, genome_list, chunksize=batch_size)):
+            fitnesses += [fitness]
+
+            if display:
+                if ipython_installed: clear_output(wait=True)
+                print('Individuals: (%s/%s) Fitness: %3.4f' % (i, len(genome_list), fitness))
     else:
         if type(ipython_client) == Client:
             lbview = ipython_client.load_balanced_view()

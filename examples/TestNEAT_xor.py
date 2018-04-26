@@ -7,9 +7,10 @@ import sys
 import time
 import random as rnd
 import numpy as np
+import cv2
 import pickle as pickle
 import MultiNEAT as NEAT
-from MultiNEAT import EvaluateGenomeList_Serial
+from MultiNEAT import EvaluateGenomeList_Serial, EvaluateGenomeList_Parallel
 from MultiNEAT import GetGenomeList, ZipFitness
 
 from concurrent.futures import ProcessPoolExecutor, as_completed
@@ -110,12 +111,14 @@ def getbest(i):
     g = NEAT.Genome(0, 3, 0, 1, False, NEAT.ActivationFunction.UNSIGNED_SIGMOID,
                     NEAT.ActivationFunction.UNSIGNED_SIGMOID, 0, params, 0)
     pop = NEAT.Population(g, params, True, 1.0, i)
-    pop.RNG.Seed(int(time.clock()*100))
+    # pop.RNG.Seed(int(time.clock()*100))
+    pop.RNG.Seed(1234)
 
     generations = 0
     for generation in range(max_generations):
         genome_list = NEAT.GetGenomeList(pop)
         fitness_list = EvaluateGenomeList_Serial(genome_list, evaluate, display=False)
+        # fitness_list = EvaluateGenomeList_Parallel(genome_list, evaluate, display=False)
         NEAT.ZipFitness(genome_list, fitness_list)
         pop.Epoch()
         generations = generation
@@ -123,14 +126,26 @@ def getbest(i):
         if best > 15.0:
             break
 
-    return generations
+    net = NEAT.NeuralNetwork()
+    pop.GetBestGenome().BuildPhenotype(net)
+
+    img = NEAT.viz.Draw(net)
+    cv2.imshow("current best", img)
+    cv2.waitKey(1)
+    
+    return generations, net.NumHiddenNeurons(), net.NumConnections()
 
 
 gens = []
 for run in range(max_runs):
-    gen = getbest(run)
+    curtime = time.time()
+
+    gen, nodes, connections = getbest(run)
     gens += [gen]
-    print('Run: {}/{}'.format(run, max_runs - 1), 'Generations to solve XOR:', gen)
+
+    elapsed = time.time() - curtime
+    elapsedPerGen = (elapsed / gen) * 1000
+    print('Run: {}/{}'.format(run, max_runs - 1), 'Generations to solve XOR:', gen, '| in %3.2f ms per gen, %3.4f s total' % (elapsedPerGen, elapsed), "complexity ({}, {})".format(nodes, connections))
 avg_gens = sum(gens) / len(gens)
 
 print('All:', gens)

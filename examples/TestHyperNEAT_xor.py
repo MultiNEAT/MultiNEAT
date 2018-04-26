@@ -162,8 +162,12 @@ def getbest(i):
         fitnesses = EvaluateGenomeList_Serial(genome_list, evaluate, display=False)
         [genome.SetFitness(fitness) for genome, fitness in zip(genome_list, fitnesses)]
 
-        print('Gen: %d/%d Best: %3.5f' % (generation, max_generations - 1, max(fitnesses)))
+        net = NEAT.NeuralNetwork()
+        pop.GetBestGenome().BuildPhenotype(net)
 
+        complexity = "complexity ({}, {})".format(net.NumHiddenNeurons(), net.NumConnections())
+        print('Gen: %d/%d Best: %3.5f. %s' % (generation, max_generations - 1, max(fitnesses), complexity))
+        
 
         best = max(fitnesses)
 

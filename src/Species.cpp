@@ -37,7 +37,7 @@
 #include "Population.h"
 #include "Utils.h"
 #include "Parameters.h"
-#include "assert.h"
+#include "Assert.h"
 
 #define COMPAT_EQUALITY_DELTA 0.0000001
 
@@ -45,13 +45,7 @@ namespace NEAT
 {
     RNG global_rng;
     
-    // Sorts the members of this species by fitness
-    bool fitness_greater(Genome *ls, Genome *rs)
-    {
-        return ((ls->GetFitness()) > (rs->GetFitness()));
-    }
-    
-    bool genome_greater(Genome ls, Genome rs)
+    bool genome_greater(const Genome& ls, const Genome& rs)
     {
         return (ls.GetFitness() > rs.GetFitness());
     }
@@ -87,31 +81,6 @@ namespace NEAT
         m_B = static_cast<int>(global_rng.RandFloat() * 255);
     }
 
-    Species &Species::operator=(const Species &a_S)
-    {
-        // self assignment guard
-        if (this != &a_S)
-        {
-            m_ID = a_S.m_ID;
-            m_Representative = a_S.m_Representative;
-            m_BestGenome = a_S.m_BestGenome;
-            m_BestSpecies = a_S.m_BestSpecies;
-            m_WorstSpecies = a_S.m_WorstSpecies;
-            m_BestFitness = a_S.m_BestFitness;
-            m_GensNoImprovement = a_S.m_GensNoImprovement;
-            m_AgeGenerations = a_S.m_AgeGenerations;
-            m_OffspringRqd = a_S.m_OffspringRqd;
-            m_R = a_S.m_R;
-            m_G = a_S.m_G;
-            m_B = a_S.m_B;
-
-            m_Individuals = a_S.m_Individuals;
-        }
-
-        return *this;
-    }
-
-
     // adds a new member to the species and updates variables
     void Species::AddIndividual(Genome &a_Genome)
     {
@@ -120,43 +89,41 @@ namespace NEAT
 
 
     // returns an individual randomly selected from the best N%
-    Genome Species::GetIndividual(Parameters &a_Parameters, RNG &a_RNG) const
+    const Genome& Species::GetIndividual(Parameters &a_Parameters, RNG &a_RNG) const
     {
         ASSERT(m_Individuals.size() > 0);
 
         // Make a pool of only evaluated individuals!
-        std::vector<Genome> t_Evaluated;
-        for (unsigned int i = 0; i < m_Individuals.size(); i++)
+        std::vector<size_t> t_Evaluated;
+        t_Evaluated.reserve(m_Individuals.size());
+        for (size_t i = 0; i < m_Individuals.size(); i++)
         {
             if (m_Individuals[i].IsEvaluated())
-                t_Evaluated.push_back(m_Individuals[i]);
+            {
+                t_Evaluated.push_back(i);
+            }
         }
 
         ASSERT(t_Evaluated.size() > 0);
 
         if (t_Evaluated.size() == 1)
         {
-            return (t_Evaluated[0]);
+            return m_Individuals[t_Evaluated[0]];
         }
         else if (t_Evaluated.size() == 2)
         {
-            return (t_Evaluated[Rounded(a_RNG.RandFloat())]);
+            return m_Individuals[t_Evaluated[Rounded(a_RNG.RandFloat())]];
         }
 
         // Warning!!!! The individuals must be sorted by best fitness for this to work
         int t_chosen_one = 0;
         
-        // then sort them here just to make sure
-        std::sort(t_Evaluated.begin(), t_Evaluated.end(), genome_greater);
-
         // Here might be introduced better selection scheme, but this works OK for now
         if (!a_Parameters.RouletteWheelSelection)
         {   //start with the last one just for comparison sake
             //int temp_genome;
 
-            //int t_num_parents = static_cast<int>( floor(
-            //        (a_Parameters.SurvivalRate * (static_cast<double>(t_Evaluated.size()))) + 1.0));
-            int t_num_parents = (int)(a_Parameters.SurvivalRate * (double)(t_Evaluated.size()));
+            size_t t_num_parents = static_cast<size_t>(a_Parameters.SurvivalRate * t_Evaluated.size());
     
             ASSERT(t_num_parents > 0);
             ASSERT(t_num_parents < t_Evaluated.size());
@@ -180,19 +147,20 @@ namespace NEAT
         {
             // roulette wheel selection
             std::vector<double> t_probs;
+            t_probs.reserve(t_Evaluated.size());
             for (unsigned int i = 0; i < t_Evaluated.size(); i++)
             {
-                t_probs.push_back(t_Evaluated[i].GetFitness());
+                t_probs.push_back(m_Individuals[t_Evaluated[i]].GetFitness());
             }
             t_chosen_one = a_RNG.Roulette(t_probs);
         }
 
-        return (t_Evaluated[t_chosen_one]);
+        return m_Individuals[t_Evaluated[t_chosen_one]];
     }
 
 
     // returns a completely random individual
-    Genome Species::GetRandomIndividual(RNG &a_RNG) const
+    const Genome& Species::GetRandomIndividual(RNG &a_RNG) const
     {
         if (m_Individuals.size() == 0) // no members yet, return representative
         {
@@ -207,7 +175,7 @@ namespace NEAT
     }
 
     // returns the leader (the member having the best fitness)
-    Genome Species::GetLeader() const
+    const Genome& Species::GetLeader() const
     {
         // Don't store the leader any more
         // Perform a search over the members and return the most fit member
@@ -235,7 +203,7 @@ namespace NEAT
     }
 
 
-    Genome Species::GetRepresentative() const
+    const Genome& Species::GetRepresentative() const
     {
         return m_Representative;
     }
@@ -758,7 +726,7 @@ namespace NEAT
             a_Pop.m_GenomeArchive.push_back(t_baby);
         }
 
-        return t_baby;
+        return std::move(t_baby);
     }
 
 
@@ -847,50 +815,27 @@ namespace NEAT
         {
             ADD_NODE = 0, ADD_LINK, REMOVE_NODE, REMOVE_LINK, CHANGE_ACTIVATION_FUNCTION,
             MUTATE_WEIGHTS, MUTATE_ACTIVATION_A, MUTATE_ACTIVATION_B, MUTATE_TIMECONSTS, MUTATE_BIASES,
-            MUTATE_NEURON_TRAITS, MUTATE_LINK_TRAITS, MUTATE_GENOME_TRAITS
+            MUTATE_NEURON_TRAITS, MUTATE_LINK_TRAITS, MUTATE_GENOME_TRAITS,
+
+            MutationTypesCount // should go after last type id
         };
-        std::vector<int> t_muts;
-        std::vector<double> t_mut_probs;
-    
-        // ADD_NODE;
-        t_mut_probs.push_back(a_Parameters.MutateAddNeuronProb);
-    
-        // ADD_LINK;
-        t_mut_probs.push_back(a_Parameters.MutateAddLinkProb);
-    
-        // REMOVE_NODE;
-        t_mut_probs.push_back(a_Parameters.MutateRemSimpleNeuronProb);
-    
-        // REMOVE_LINK;
-        t_mut_probs.push_back(a_Parameters.MutateRemLinkProb);
-    
-        // CHANGE_ACTIVATION_FUNCTION;
-        t_mut_probs.push_back(a_Parameters.MutateNeuronActivationTypeProb);
-    
-        // MUTATE_WEIGHTS;
-        t_mut_probs.push_back(a_Parameters.MutateWeightsProb);
-    
-        // MUTATE_ACTIVATION_A;
-        t_mut_probs.push_back(a_Parameters.MutateActivationAProb);
-    
-        // MUTATE_ACTIVATION_B;
-        t_mut_probs.push_back(a_Parameters.MutateActivationBProb);
-    
-        // MUTATE_TIMECONSTS;
-        t_mut_probs.push_back(a_Parameters.MutateNeuronTimeConstantsProb);
-    
-        // MUTATE_BIASES;
-        t_mut_probs.push_back(a_Parameters.MutateNeuronBiasesProb);
-    
-        // MUTATE_NEURON_TRAITS;
-        t_mut_probs.push_back( a_Parameters.MutateNeuronTraitsProb );
-    
-        // MUTATE_LINK_TRAITS;
-        t_mut_probs.push_back( a_Parameters.MutateLinkTraitsProb );
-    
-        // MUTATE_GENOME_TRAITS;
-        t_mut_probs.push_back( a_Parameters.MutateGenomeTraitsProb );
-    
+        
+        std::vector<double> t_mut_probs(MutationTypesCount);
+        
+        t_mut_probs[ADD_NODE] = a_Parameters.MutateAddNeuronProb;
+        t_mut_probs[ADD_LINK] = (a_Parameters.MutateAddLinkProb);
+        t_mut_probs[REMOVE_NODE] = a_Parameters.MutateRemSimpleNeuronProb;
+        t_mut_probs[REMOVE_LINK] = a_Parameters.MutateRemLinkProb;
+        t_mut_probs[CHANGE_ACTIVATION_FUNCTION] = a_Parameters.MutateNeuronActivationTypeProb;
+        t_mut_probs[MUTATE_WEIGHTS] = a_Parameters.MutateWeightsProb;
+        t_mut_probs[MUTATE_ACTIVATION_A] = a_Parameters.MutateActivationAProb;
+        t_mut_probs[MUTATE_ACTIVATION_B] = a_Parameters.MutateActivationBProb;
+        t_mut_probs[MUTATE_TIMECONSTS] = a_Parameters.MutateNeuronTimeConstantsProb;
+        t_mut_probs[MUTATE_BIASES] = a_Parameters.MutateNeuronBiasesProb;
+        t_mut_probs[MUTATE_NEURON_TRAITS] =  a_Parameters.MutateNeuronTraitsProb;
+        t_mut_probs[MUTATE_LINK_TRAITS] =  a_Parameters.MutateLinkTraitsProb;
+        t_mut_probs[MUTATE_GENOME_TRAITS] =  a_Parameters.MutateGenomeTraitsProb;
+
         // Special consideration for phased searching - do not allow certain mutations depending on the search mode
         // also don't use additive mutations if we just want to get rid of the clones
         if ((a_Pop.GetSearchMode() == SIMPLIFYING) || t_baby_is_clone)
@@ -1003,6 +948,11 @@ namespace NEAT
         }
 #endif
     }
-    
+
+    void Species::Clear()
+    {
+        m_Individuals.clear();
+    }
+
 } // namespace NEAT
 

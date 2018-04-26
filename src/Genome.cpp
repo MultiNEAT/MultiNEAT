@@ -77,56 +77,6 @@ namespace NEAT
         m_initial_num_links = 0;
     }
 
-
-    // Copy constructor
-    Genome::Genome(const Genome &a_G)
-    {
-        m_ID = a_G.m_ID;
-        m_Depth = a_G.m_Depth;
-        m_NeuronGenes = a_G.m_NeuronGenes;
-        m_LinkGenes = a_G.m_LinkGenes;
-        m_GenomeGene = a_G.m_GenomeGene;
-        m_Fitness = a_G.m_Fitness;
-        m_NumInputs = a_G.m_NumInputs;
-        m_NumOutputs = a_G.m_NumOutputs;
-        m_AdjustedFitness = a_G.m_AdjustedFitness;
-        m_OffspringAmount = a_G.m_OffspringAmount;
-        m_Evaluated = a_G.m_Evaluated;
-        m_PhenotypeBehavior = a_G.m_PhenotypeBehavior;
-        m_initial_num_neurons = a_G.m_initial_num_neurons;
-        m_initial_num_links = a_G.m_initial_num_links;
-#ifdef USE_BOOST_PYTHON
-        m_behavior = a_G.m_behavior;
-#endif
-    }
-
-    // assignment operator
-    Genome &Genome::operator=(const Genome &a_G)
-    {
-        // self assignment guard
-        if (this != &a_G)
-        {
-            m_ID = a_G.m_ID;
-            m_Depth = a_G.m_Depth;
-            m_NeuronGenes = a_G.m_NeuronGenes;
-            m_LinkGenes = a_G.m_LinkGenes;
-            m_GenomeGene = a_G.m_GenomeGene;
-            m_Fitness = a_G.m_Fitness;
-            m_AdjustedFitness = a_G.m_AdjustedFitness;
-            m_NumInputs = a_G.m_NumInputs;
-            m_NumOutputs = a_G.m_NumOutputs;
-            m_OffspringAmount = a_G.m_OffspringAmount;
-            m_Evaluated = a_G.m_Evaluated;
-            m_PhenotypeBehavior = a_G.m_PhenotypeBehavior;
-            m_initial_num_neurons = a_G.m_initial_num_neurons;
-            m_initial_num_links = a_G.m_initial_num_links;
-#ifdef USE_BOOST_PYTHON
-            m_behavior = a_G.m_behavior;
-#endif
-        }
-
-        return *this;
-    }
     
     // New constructor that creates a fully-connected CTRNN
     Genome::Genome(unsigned int a_ID,
@@ -711,6 +661,20 @@ namespace NEAT
         return false;
     }
 
+    namespace Detail
+    {
+        struct LoopsDetector : public boost::dfs_visitor<>
+        {
+            LoopsDetector()
+            : m_has_loops(false) { }
+            
+            template <typename Edge, typename Graph>
+            void back_edge(const Edge&, Graph&) { m_has_loops = true; }
+            
+            bool m_has_loops;
+        };
+    }
+
     bool Genome::HasLoops()
     {
         NeuralNetwork net;
@@ -724,18 +688,10 @@ namespace NEAT
             bs::add_edge(net.m_connections[i].m_source_neuron_idx, net.m_connections[i].m_target_neuron_idx, g);
         }
 
-        typedef std::vector<Vertex> container;
-        container c;
-        try
-        {
-            bs::topological_sort(g, std::back_inserter(c));
-        }
-        catch (bs::not_a_dag)
-        {
-            has_cycles = true;
-        }
+        Detail::LoopsDetector detector;
+        depth_first_search(g, boost::visitor(detector));
 
-        return has_cycles;
+        return detector.m_has_loops;
     }
 
     // Returns true if the specified link is present in the genome
@@ -762,6 +718,7 @@ namespace NEAT
         a_Net.Clear();
         a_Net.SetInputOutputDimentions(m_NumInputs, m_NumOutputs);
 
+        a_Net.ReserveNeuronsMemory(NumNeurons());
         // Fill the net with the neurons
         for (unsigned int i = 0; i < NumNeurons(); i++)
         {
@@ -778,6 +735,7 @@ namespace NEAT
             a_Net.AddNeuron(t_n);
         }
 
+        a_Net.ReserveConnectionsMemory(NumLinks());
         // Fill the net with the connections
         for (unsigned int i = 0; i < NumLinks(); i++)
         {
@@ -1229,11 +1187,11 @@ namespace NEAT
 
 
     // Returns the absolute distance between this genome and a_G
-    double Genome::CompatibilityDistance(Genome &a_G, Parameters &a_Parameters)
+    double Genome::CompatibilityDistance(const Genome &a_G, const Parameters &a_Parameters)
     {
         // iterators for moving through the genomes' genes
-        std::vector<LinkGene>::iterator t_g1;
-        std::vector<LinkGene>::iterator t_g2;
+        std::vector<LinkGene>::const_iterator t_g1;
+        std::vector<LinkGene>::const_iterator t_g2;
 
         // this variable is the total distance between the genomes
         // if it passes beyond the compatibility treshold, the function returns false
@@ -1412,22 +1370,22 @@ namespace NEAT
         // add trait differences according to each one's coeff
         for(auto it = t_total_link_trait_difference.begin(); it != t_total_link_trait_difference.end(); it++)
         {
-            t_total_distance += (a_Parameters.LinkTraits[it->first].m_ImportanceCoeff * it->second) / t_num_matching_links;
+            t_total_distance += (a_Parameters.LinkTraits.at(it->first).m_ImportanceCoeff * it->second) / t_num_matching_links;
         }
         for(auto it = t_total_neuron_trait_difference.begin(); it != t_total_neuron_trait_difference.end(); it++)
         {
-            t_total_distance += (a_Parameters.NeuronTraits[it->first].m_ImportanceCoeff * it->second) / t_num_matching_neurons;
+            t_total_distance += (a_Parameters.NeuronTraits.at(it->first).m_ImportanceCoeff * it->second) / t_num_matching_neurons;
         }
         for(auto it = t_genome_link_trait_difference.begin(); it != t_genome_link_trait_difference.end(); it++)
         {
-            t_total_distance += (a_Parameters.GenomeTraits[it->first].m_ImportanceCoeff * it->second);
+            t_total_distance += (a_Parameters.GenomeTraits.at(it->first).m_ImportanceCoeff * it->second);
         }
 
         return t_total_distance;
     }
 
     // Returns true if this genome and a_G are compatible (belong in the same species)
-    bool Genome::IsCompatibleWith(Genome &a_G, Parameters &a_Parameters)
+    bool Genome::IsCompatibleWith(const Genome &a_G, Parameters &a_Parameters)
     {
         // full compatibility cases
         if (this == &a_G)
@@ -1451,22 +1409,22 @@ namespace NEAT
     // Returns a random activation function from the canonical set based ot probabilities
     ActivationFunction GetRandomActivation(const Parameters &a_Parameters, RNG &a_RNG)
     {
-        std::vector<double> t_probs;
-
-        t_probs.push_back(a_Parameters.ActivationFunction_SignedSigmoid_Prob);
-        t_probs.push_back(a_Parameters.ActivationFunction_UnsignedSigmoid_Prob);
-        t_probs.push_back(a_Parameters.ActivationFunction_Tanh_Prob);
-        t_probs.push_back(a_Parameters.ActivationFunction_TanhCubic_Prob);
-        t_probs.push_back(a_Parameters.ActivationFunction_SignedStep_Prob);
-        t_probs.push_back(a_Parameters.ActivationFunction_UnsignedStep_Prob);
-        t_probs.push_back(a_Parameters.ActivationFunction_SignedGauss_Prob);
-        t_probs.push_back(a_Parameters.ActivationFunction_UnsignedGauss_Prob);
-        t_probs.push_back(a_Parameters.ActivationFunction_Abs_Prob);
-        t_probs.push_back(a_Parameters.ActivationFunction_SignedSine_Prob);
-        t_probs.push_back(a_Parameters.ActivationFunction_UnsignedSine_Prob);
-        t_probs.push_back(a_Parameters.ActivationFunction_Linear_Prob);
-        t_probs.push_back(a_Parameters.ActivationFunction_Relu_Prob);
-        t_probs.push_back(a_Parameters.ActivationFunction_Softplus_Prob);
+        const std::vector<double> t_probs = {
+            a_Parameters.ActivationFunction_SignedSigmoid_Prob,
+            a_Parameters.ActivationFunction_UnsignedSigmoid_Prob,
+            a_Parameters.ActivationFunction_Tanh_Prob,
+            a_Parameters.ActivationFunction_TanhCubic_Prob,
+            a_Parameters.ActivationFunction_SignedStep_Prob,
+            a_Parameters.ActivationFunction_UnsignedStep_Prob,
+            a_Parameters.ActivationFunction_SignedGauss_Prob,
+            a_Parameters.ActivationFunction_UnsignedGauss_Prob,
+            a_Parameters.ActivationFunction_Abs_Prob,
+            a_Parameters.ActivationFunction_SignedSine_Prob,
+            a_Parameters.ActivationFunction_UnsignedSine_Prob,
+            a_Parameters.ActivationFunction_Linear_Prob,
+            a_Parameters.ActivationFunction_Relu_Prob,
+            a_Parameters.ActivationFunction_Softplus_Prob,
+        };
 
         return (NEAT::ActivationFunction) a_RNG.Roulette(t_probs);
     }

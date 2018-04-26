@@ -44,9 +44,9 @@ void RNG::Seed(long a_Seed)
 {
 #ifdef USE_BOOST_RANDOM
     gen.seed(a_Seed);
-#else
-    srand(a_Seed);
 #endif
+
+    srand(a_Seed);
 }
 
 void RNG::TimeSeed()
@@ -93,7 +93,12 @@ int RNG::RandInt(int aX, int aY)
             return aY;
         }
     }
-    return aX + (rand() % (aY - aX + 1));
+    int denom = (aY - aX + 1);
+    if (denom == 0)
+    {
+        return 0;
+    }
+    return aX + (rand() % denom);
 #endif
     
 }
@@ -157,7 +162,7 @@ double RNG::RandGaussSigned()
 #endif
 }
 
-int RNG::Roulette(std::vector<double>& a_probs)
+int RNG::Roulette(const std::vector<double>& a_probs)
 {
 #ifdef USE_BOOST_RANDOM
     boost::random::discrete_distribution<> d_dist(a_probs);

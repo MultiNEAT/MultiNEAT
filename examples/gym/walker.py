@@ -135,6 +135,7 @@ def main():
     maxf_ever = 0
 
     env = gym.make('BipedalWalker-v2')
+    print('Starting training...')
 
     try:
         for generation in range(generations):
@@ -183,11 +184,10 @@ def do_trial(env, net, render_during_training):
     observation = env.reset()
     net.Flush()
 
-    f = 0
+    fitness = 0
     for t in range(300):
 
         if render_during_training:
-            time.sleep(0.001)
             env.render()
 
         # interact with NN
@@ -201,9 +201,12 @@ def do_trial(env, net, render_during_training):
         action = np.array(out)
         observation, reward, done, info = env.step(action)
 
-        f += reward
+        fitness += reward
+        
+        if done:
+            break
 
-    return f
+    return fitness
 
 
 main()

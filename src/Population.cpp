@@ -268,8 +268,8 @@ void Population::Speciate()
         // if not compatible, create a new species.
         for(unsigned int j=0; j<m_Species.size(); j++)
         {
-            Genome tmp = m_Species[j].GetRepresentative();
-            if (m_Genomes[i].IsCompatibleWith( tmp, m_Parameters ))
+            const Genome& tmp = m_Species[j].GetRepresentative();
+            if (m_Genomes[i].IsCompatibleWith(tmp, m_Parameters))
             {
                 // Compatible, add to species
                 m_Species[j].AddIndividual( m_Genomes[i] );
@@ -282,7 +282,7 @@ void Population::Speciate()
         if (!t_added)
         {
             // didn't find compatible species, create new species
-            m_Species.push_back( Species(m_Genomes[i], m_NextSpeciesID));
+            m_Species.push_back(Species(m_Genomes[i], m_NextSpeciesID));
             m_NextSpeciesID++;
         }
     }
@@ -362,10 +362,11 @@ void Population::CountOffspring()
 
 
 // This little tool function helps ordering the genomes by fitness
-bool species_greater(Species ls, Species rs)
+bool species_greater(const Species& ls, const Species& rs)
 {
     return ((ls.GetBestFitness()) > (rs.GetBestFitness()));
 }
+
 void Population::Sort()
 {
     ASSERT(m_Species.size() > 0);
