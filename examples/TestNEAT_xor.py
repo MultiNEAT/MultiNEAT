@@ -103,6 +103,9 @@ params.MutateLinkTraitsProb = 0
 params.AllowLoops = True
 params.AllowClones = True
 
+max_runs = 10
+max_generations = 150
+
 def getbest(i):
     g = NEAT.Genome(0, 3, 0, 1, False, NEAT.ActivationFunction.UNSIGNED_SIGMOID,
                     NEAT.ActivationFunction.UNSIGNED_SIGMOID, 0, params, 0)
@@ -110,7 +113,7 @@ def getbest(i):
     pop.RNG.Seed(int(time.clock()*100))
 
     generations = 0
-    for generation in range(1000):
+    for generation in range(max_generations):
         genome_list = NEAT.GetGenomeList(pop)
         fitness_list = EvaluateGenomeList_Serial(genome_list, evaluate, display=False)
         NEAT.ZipFitness(genome_list, fitness_list)
@@ -124,10 +127,10 @@ def getbest(i):
 
 
 gens = []
-for run in range(100):
+for run in range(max_runs):
     gen = getbest(run)
     gens += [gen]
-    print('Run:', run, 'Generations to solve XOR:', gen)
+    print('Run: {}/{}'.format(run, max_runs - 1), 'Generations to solve XOR:', gen)
 avg_gens = sum(gens) / len(gens)
 
 print('All:', gens)
