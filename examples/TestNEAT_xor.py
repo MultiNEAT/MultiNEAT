@@ -104,7 +104,7 @@ params.AllowLoops = True
 params.AllowClones = True
 
 max_runs = 10
-max_generations = 400
+max_generations = 150
 
 def getbest(i):
     g = NEAT.Genome(0, 3, 0, 1, False, NEAT.ActivationFunction.UNSIGNED_SIGMOID,
@@ -130,8 +130,8 @@ gens = []
 for run in range(max_runs):
     gen = getbest(run)
     gens += [gen]
-    print('NEAT_xor. Run: {}/{}'.format(run, max_runs - 1), 'Generations to solve XOR:', gen)
+    print('Run: {}/{}'.format(run, max_runs - 1), 'Generations to solve XOR:', gen)
 avg_gens = sum(gens) / len(gens)
 
-print('NEAT_xor. All:', gens)
-print('NEAT_xor. Average:', avg_gens)
+print('All:', gens)
+print('Average:', avg_gens)

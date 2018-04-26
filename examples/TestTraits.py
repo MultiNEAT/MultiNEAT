@@ -151,7 +151,7 @@ for generation in range(max_generations):
     NEAT.ZipFitness(genome_list, fitness_list)
 
     # PrintGenomeTraits( pop.GetBestGenome() )
-    print('Traits. Gen: %d/%d Best: %3.5f' % (generation, max_generations - 1, max(fitness_list)))
+    print('Gen: %d/%d Best: %3.5f' % (generation, max_generations - 1, max(fitness_list)))
     
     pop.Epoch()
 
