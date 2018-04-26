@@ -2986,7 +2986,9 @@ namespace NEAT
         if (a_Depth > 16384)
         {
             // oops! a possible loop in the network!
-            // DBG(" ERROR! Trying to get the depth of a looped network!");
+            const char* errorMessage = "Genome::NeuronDepth. Trying to get the depth of a looped network!";
+            // DBG(errorMessage);
+            throw std::runtime_error(errorMessage);
             return 16384;
         }
 

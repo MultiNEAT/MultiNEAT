@@ -104,6 +104,9 @@ params.MutateLinkTraitsProb = 0
 params.AllowLoops = True
 params.AllowClones = True
 
+max_runs = 10
+max_generations = 150
+
 def getbest(i):
     g = NEAT.Genome(0, 3, 0, 1, False, NEAT.ActivationFunction.UNSIGNED_SIGMOID,
                     NEAT.ActivationFunction.UNSIGNED_SIGMOID, 0, params, 0)
@@ -112,7 +115,7 @@ def getbest(i):
     pop.RNG.Seed(1234)
 
     generations = 0
-    for generation in range(1000):
+    for generation in range(max_generations):
         genome_list = NEAT.GetGenomeList(pop)
         fitness_list = EvaluateGenomeList_Serial(genome_list, evaluate, display=False)
         # fitness_list = EvaluateGenomeList_Parallel(genome_list, evaluate, display=False)
@@ -134,7 +137,7 @@ def getbest(i):
 
 
 gens = []
-for run in range(100):
+for run in range(max_runs):
     curtime = time.time()
 
     gen, nodes, connections = getbest(run)
@@ -142,7 +145,7 @@ for run in range(100):
 
     elapsed = time.time() - curtime
     elapsedPerGen = (elapsed / gen) * 1000
-    print('Run:', run, 'Generations to solve XOR:', gen, '| in %3.2f ms per gen, %3.4f s total' % (elapsedPerGen, elapsed), "complexity ({}, {})".format(nodes, connections))
+    print('Run: {}/{}'.format(run, max_runs - 1), 'Generations to solve XOR:', gen, '| in %3.2f ms per gen, %3.4f s total' % (elapsedPerGen, elapsed), "complexity ({}, {})".format(nodes, connections))
 avg_gens = sum(gens) / len(gens)
 
 print('All:', gens)

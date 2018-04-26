@@ -5,6 +5,10 @@ image: Visual Studio 2017
 platform:
     - x64
 
+branches:
+  only:
+    - master
+
 environment:
   fast_finish: true
 
@@ -43,7 +47,7 @@ build: false
 
 test_script:
   - "%MINICONDA%\\Scripts\\Activate.bat"
-  - conda build conda/ -c defaults -c conda-forge
+  - conda build conda/ -c conda-forge
 
 skip_commits:
   files:

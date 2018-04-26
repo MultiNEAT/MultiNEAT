@@ -30,43 +30,44 @@ distutils.ccompiler.CCompiler.compile=parallelCCompile
 def getExtensions():
     platform = sys.platform
 
+    is_windows = platform.startswith('win') or platform.startswith('cygwin')
+    is_macOS = platform.startswith('darwin')
+    is_linux = platform.startswith('linux')
+
     extensionsList = []
-    sources = ['src/Genome.cpp',
-               'src/Genes.cpp',
-               'src/Innovation.cpp',
-               'src/NeuralNetwork.cpp',
-               'src/Parameters.cpp',
-               'src/PhenotypeBehavior.cpp',
-               'src/Population.cpp',
-               'src/Random.cpp',
-               'src/Species.cpp',
-               'src/Substrate.cpp',
-               'src/Utils.cpp']
+    sources = [
+        'src/Genes.cpp',
+        'src/Genome.cpp',
+        'src/Innovation.cpp',
+        'src/NeuralNetwork.cpp',
+        'src/Parameters.cpp',
+        'src/PhenotypeBehavior.cpp',
+        'src/Population.cpp',
+        'src/PythonBindings.cpp',
+        'src/Random.cpp',
+        'src/Species.cpp',
+        'src/Substrate.cpp',
+        'src/Utils.cpp',
+    ]
 
-    extra = ['-march=native',
-             '-g'
-             ]
+    compile_args = []
 
-    if platform == 'darwin':
-        extra += ['-stdlib=libc++',
-             '-std=c++11',]
-    else:
-        extra += ['-std=gnu++11']
+    if is_macOS or is_linux:
+        compile_args += ['-march=native', '-g', '-w']
 
-    is_windows = 'win' in platform and platform != 'darwin'
-    if is_windows:
-        extra.append('/EHsc')
-    else:
-        extra.append('-w')
+    if is_macOS:
+        compile_args += ['-stdlib=libc++', '-std=c++11']
+    elif is_linux:
+        compile_args += ['-std=gnu++11']
+    elif is_windows:
+        compile_args += ['/EHsc']
 
     prefix = os.getenv('PREFIX')
     if prefix and len(prefix) > 0:
-        extra += ["-I{}/include".format(prefix)]
+        compile_args += ["-I{}/include".format(prefix)]
 
     is_python_2 = sys.version_info[0] < 3
     python_version_string = "{}{}".format(sys.version_info[0], sys.version_info[1])
-
-    sources.insert(0, 'src/PythonBindings.cpp')
 
     if is_windows:
         if is_python_2:
@@ -75,11 +76,13 @@ def getExtensions():
     libs = ['boost_system', 'boost_serialization',
             'boost_python' + python_version_string, "boost_numpy" + python_version_string]
 
-    extra.extend(['-DUSE_BOOST_PYTHON'])
+    compile_args += ['-DUSE_BOOST_PYTHON']
+    compile_args += ['-DBOOST_ALL_NO_LIB'] # Do not autolink since we specify all libs manually and autolink is broken for boost-python 1.67.0 on Windows anyways
+
     extensionsList.append(Extension('MultiNEAT._MultiNEAT',
                                     sources,
                                     libraries=libs,
-                                    extra_compile_args=extra))
+                                    extra_compile_args=compile_args))
 
     return extensionsList
 
