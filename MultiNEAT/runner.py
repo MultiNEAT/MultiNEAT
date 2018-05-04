@@ -187,7 +187,7 @@ def EvaluateGenomeList_Parallel(genome_list, evaluator,
 
         executor = EvaluateGenomeList_Parallel.executor
         if not executor:
-            executor = ProcessPoolExecutor(max_workers=cores)
+            executor = ThreadPoolExecutor(max_workers=cores)
             EvaluateGenomeList_Parallel.executor = executor
 
         for i, fitness in enumerate(executor.map(evaluator, genome_list, chunksize=batch_size)):
