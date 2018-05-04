@@ -10,6 +10,7 @@ class Experiment:
         """Reports if best_fitness is sufficient solution and evolution can be stopped"""
         return False
 
+
 class RunnerDelegate:
     def create_seed_population(self):
         """Should return population"""
@@ -30,7 +31,6 @@ class Runner:
         self.total_time = 0
         self.time_per_generation = 0
 
-
     def __evolve(self, population):
         """Main method that runs evolution"""
         self.generations_to_solve = 0
@@ -46,7 +46,6 @@ class Runner:
                 break
 
             self.population.Epoch()  # evolution happens here
-
 
     def __evaluate_fitness(self, genome):
         """Evaluation fitness single genome"""
