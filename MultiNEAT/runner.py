@@ -53,6 +53,7 @@ class Runner:
         return self.experiment.fitness(network)
 
     def run(self, max_generations):
+        """Run evolution for maximum of max_generations"""
         self.max_generations = max_generations
 
         start_time = time.time()
@@ -79,31 +80,6 @@ def ZipFitness(genome_list, fitness_list):
     for genome, fitness in zip(genome_list, fitness_list):
         genome.SetFitness(fitness)
         genome.SetEvaluated()
-
-
-try:
-    import networkx as nx
-
-    def Genome2NX(g):
-
-        nts = g.GetNeuronTraits()
-        lts = g.GetLinkTraits()
-        gr = nx.DiGraph()
-
-        for i, tp, traits in nts:
-            gr.add_node(i, **traits)
-
-        for inp, outp, traits in lts:
-            gr.add_edge(inp, outp, **traits)
-
-        gr.genome_traits = g.GetGenomeTraits()
-
-        return gr
-except:
-    pass
-
-RetrieveGenomeList = GetGenomeList
-FetchGenomeList = GetGenomeList
 
 try:
     from IPython.display import clear_output
