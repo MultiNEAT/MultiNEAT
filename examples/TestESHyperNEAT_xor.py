@@ -12,6 +12,7 @@ import pickle as pickle
 import MultiNEAT as NEAT
 from MultiNEAT import GetGenomeList, ZipFitness
 from MultiNEAT import EvaluateGenomeList_Serial
+from XorExperiment import *
 
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
@@ -110,46 +111,11 @@ def evaluate_xor(genome):
     net = NEAT.NeuralNetwork()
 
     try:
-
         genome.BuildESHyperNEATPhenotype(net, substrate, params)
-        error = 0
-        depth = 3
-        correct = 0.0
 
-        net.Flush()
+        experiment = XorExperiment()
 
-        net.Input([1, 0, 1])
-        [net.Activate() for _ in range(depth)]
-        o = net.Output()
-        error += abs(o[0] - 1)
-        if o[0] > 0.75:
-            correct += 1.
-
-        net.Flush()
-        net.Input([0, 1, 1])
-        [net.Activate() for _ in range(depth)]
-        o = net.Output()
-        error += abs(o[0] - 1)
-        if o[0] > 0.75:
-            correct += 1.
-
-        net.Flush()
-        net.Input([1, 1, 1])
-        [net.Activate() for _ in range(depth)]
-        o = net.Output()
-        error += abs(o[0] - 0)
-        if o[0] < 0.25:
-            correct += 1.
-
-        net.Flush()
-        net.Input([0, 0, 1])
-        [net.Activate() for _ in range(depth)]
-        o = net.Output()
-        error += abs(o[0] - 0)
-        if o[0] < 0.25:
-            correct += 1.
-
-        return (4 - error) ** 2
+        return experiment.fitness(net)
 
     except Exception as ex:
         print('Exception:', ex)
@@ -168,6 +134,7 @@ def getbest(run):
                     params, 0)
 
     pop = NEAT.Population(g, params, True, 1.0, run)
+    generations_to_solve = "<N/A>"
     for generation in range(1000):
         # Evaluate genomes
         genome_list = NEAT.GetGenomeList(pop)
@@ -202,13 +169,13 @@ def getbest(run):
         cv2.waitKey(1)
 
         if max(fitnesses) > 15.0:
+            generations_to_solve = generation
             break
 
         # Epoch
-        generations = generation
         pop.Epoch()
 
-    return generations
+    return generations_to_solve
 
 
 gens = []

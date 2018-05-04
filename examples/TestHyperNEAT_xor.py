@@ -11,7 +11,7 @@ import numpy as np
 import pickle as pickle
 import MultiNEAT as NEAT
 from MultiNEAT import GetGenomeList, ZipFitness, EvaluateGenomeList_Serial, EvaluateGenomeList_Parallel
-
+from XorExperiment import *
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
 # the simple 2D substrate with 3 input points, 2 hidden and 1 output for XOR
@@ -47,42 +47,14 @@ except:
     print('You have mistyped a substrate member name upon setup. Please fix it.')
     sys.exit(1)
 
-
 def evaluate(genome):
     net = NEAT.NeuralNetwork()
     try:
         genome.BuildHyperNEATPhenotype(net, substrate)
 
-        error = 0
-        depth = 5
+        experiment = XorExperiment()
 
-        # do stuff and return the fitness
-        net.Flush()
-
-        net.Input([1, 0, 1])
-        [net.Activate() for _ in range(depth)]
-        o = net.Output()
-        error += abs(o[0] - 1)
-
-        net.Flush()
-        net.Input([0, 1, 1])
-        [net.Activate() for _ in range(depth)]
-        o = net.Output()
-        error += abs(o[0] - 1)
-
-        net.Flush()
-        net.Input([1, 1, 1])
-        [net.Activate() for _ in range(depth)]
-        o = net.Output()
-        error += abs(o[0] - 0)
-
-        net.Flush()
-        net.Input([0, 0, 1])
-        [net.Activate() for _ in range(depth)]
-        o = net.Output()
-        error += abs(o[0] - 0)
-
-        return (4 - error) ** 2
+        return experiment.fitness(net)
 
     except Exception as ex:
         print('Exception:', ex)

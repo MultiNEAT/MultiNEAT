@@ -70,6 +70,9 @@ def EvaluateSerial(population, evaluator, display=False, show_elapsed=False):
     genome_list = GetGenomeList(population)
     fitness_list = EvaluateGenomeList_Serial(genome_list, evaluator, display=display, show_elapsed=show_elapsed)
     ZipFitness(genome_list, fitness_list)
+
+    population.Epoch()
+
     return fitness_list
 
 def EvaluateParallel(population, evaluator,
@@ -77,6 +80,9 @@ def EvaluateParallel(population, evaluator,
     genome_list = GetGenomeList(population)
     fitness_list = EvaluateGenomeList_Parallel(genome_list, evaluator, cores=cores, display=display, ipython_client=ipython_client)
     ZipFitness(genome_list, fitness_list)
+
+    population.Epoch()
+
     return fitness_list
 
 

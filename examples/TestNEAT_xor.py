@@ -12,7 +12,7 @@ import pickle as pickle
 import MultiNEAT as NEAT
 from MultiNEAT import EvaluateGenomeList_Serial, EvaluateGenomeList_Parallel
 from MultiNEAT import GetGenomeList, ZipFitness
-
+from XorExperiment import *
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
 
@@ -20,39 +20,9 @@ def evaluate(genome):
     net = NEAT.NeuralNetwork()
     genome.BuildPhenotype(net)
 
-    error = 0
+    experiment = XorExperiment(depth=5)
 
-    # do stuff and return the fitness
-    net.Flush()
-    net.Input(np.array([1., 0., 1.]))  # can input numpy arrays, too
-    # for some reason only np.float64 is supported
-    for _ in range(2):
-        net.Activate()
-    o = net.Output()
-    error += abs(1 - o[0])
-
-    net.Flush()
-    net.Input([0, 1, 1])
-    for _ in range(2):
-        net.Activate()
-    o = net.Output()
-    error += abs(1 - o[0])
-
-    net.Flush()
-    net.Input([1, 1, 1])
-    for _ in range(2):
-        net.Activate()
-    o = net.Output()
-    error += abs(o[0])
-
-    net.Flush()
-    net.Input([0, 0, 1])
-    for _ in range(2):
-        net.Activate()
-    o = net.Output()
-    error += abs(o[0])
-
-    return (4 - error) ** 2
+    return experiment.fitness(net)
 
 
 params = NEAT.Parameters()
@@ -104,7 +74,7 @@ params.MutateLinkTraitsProb = 0
 params.AllowLoops = True
 params.AllowClones = True
 
-max_runs = 10
+max_runs = 100
 max_generations = 150
 
 def getbest(run_index):
@@ -114,28 +84,28 @@ def getbest(run_index):
 
     shouldRandomizeWeights = True
     randomWeightsMagnitude = 1.0
-    randomSeed = 1234
-    # randomSeed = int(time.clock()*100)
+    # randomSeed = 1234
+    randomSeed = int(time.clock()*100)
     pop = NEAT.Population(seed_genome, params, shouldRandomizeWeights, randomWeightsMagnitude, randomSeed)
 
     generations_to_solve = "<N/A>"
     for generation in range(max_generations):
-        genome_list = NEAT.GetGenomeList(pop)
-        fitness_list = EvaluateGenomeList_Serial(genome_list, evaluate, display=False)
-        # fitness_list = EvaluateGenomeList_Parallel(genome_list, evaluate, display=False)
-        NEAT.ZipFitness(genome_list, fitness_list)
-        pop.Epoch()
+        fitness_list = NEAT.EvaluateSerial(pop, evaluate, display=False)
+        
         best = max(fitness_list)
         if best > 15.0:
             generations_to_solve = generation
             break
 
+
+
     net = NEAT.NeuralNetwork()
     pop.GetBestGenome().BuildPhenotype(net)
 
-    # img = NEAT.viz.Draw(net)
-    # cv2.imshow("current best", img)
-    # cv2.waitKey(1)
+    # if net.NumHiddenNeurons() == 0:
+    #     img = NEAT.viz.Draw(net)
+    #     cv2.imshow("solved with 0 nodes", img)
+    #     cv2.waitKey(1)
     
     return generations_to_solve, net.NumHiddenNeurons(), net.NumConnections()
 
