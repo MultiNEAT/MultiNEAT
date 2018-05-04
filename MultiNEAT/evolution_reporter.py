@@ -1,4 +1,16 @@
 from ._MultiNEAT import NeuralNetwork
+from enum import IntFlag, auto
+
+
+class Print(IntFlag):
+    NONE = 0
+    RUN = auto()
+    GENERATION = auto()
+    EVALUATION = auto()
+    EVALUATION_TRIAL = auto()
+    SOLUTION_FOUND = auto()
+    SOLUTION_NOT_FOUND = auto()
+    ALL = RUN | GENERATION | EVALUATION | EVALUATION_TRIAL | SOLUTION_FOUND | SOLUTION_NOT_FOUND
 
 
 class EvolutionReporter:
@@ -25,24 +37,41 @@ class DummyEvolutionContextManager:
 
 
 class PrintingEvolutionReporter:
+    def __init__(self, flags=Print.NONE):
+        self.flags = flags
+
     def run(self, current, maximum):
-        return PrintingEvolutionContextManager("run", current, maximum)
+        if Print.RUN in self.flags:
+            return PrintingEvolutionContextManager("run", current, maximum)
+        else:
+            return DummyEvolutionContextManager()
 
     def generation(self, current, maximum):
-        return PrintingEvolutionContextManager("generation", current, maximum)
+        if Print.GENERATION in self.flags:
+            return PrintingEvolutionContextManager("generation", current, maximum)
+        else:
+            return DummyEvolutionContextManager()
 
     def evaluation(self, genome):
-        return PrintingEvolutionContextManager("evaluation")
+        if Print.EVALUATION in self.flags:
+            return PrintingEvolutionContextManager("evaluation")
+        else:
+            return DummyEvolutionContextManager()
 
     def evaluation_trial(self, genome):
-        return PrintingEvolutionContextManager("evaluation trial")
+        if Print.EVALUATION_TRIAL in self.flags:
+            return PrintingEvolutionContextManager("evaluation trial")
+        else:
+            return DummyEvolutionContextManager()
 
     def solution_found(self, population, generation):
-        print("🎉🎉🎉 Solution found in {} generations".format(generation),
-              self.best_genome_stats(population))
+        if Print.SOLUTION_FOUND in self.flags:
+            print("🎉🎉🎉 Solution found in {} generations".format(generation),
+                    self.best_genome_stats(population))
 
     def solution_not_found(self, population):
-        print("😭😭😭 Solution not found")
+        if Print.SOLUTION_NOT_FOUND in self.flags:
+            print("😭😭😭 Solution not found")
 
     def best_genome_stats(self, population):
         net = NeuralNetwork()

@@ -88,7 +88,9 @@ class XorNeatRunnerDelegate:
 
 gens = []
 for run in range(max_runs):
-    runner = NEAT.Runner(delegate = XorNeatRunnerDelegate(), experiment = XorExperiment(depth=5))
+    runner = NEAT.Runner(delegate = XorNeatRunnerDelegate(),
+                            experiment = XorExperiment(depth=5),
+                            reporter = NEAT.PrintingEvolutionReporter(NEAT.Print.SOLUTION_FOUND))
     runner.run(max_generations = max_generations)
 
     gens += [runner.generations_to_solve]

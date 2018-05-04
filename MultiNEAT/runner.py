@@ -17,7 +17,7 @@ class RunnerDelegate:
 
 
 class Runner:
-    def __init__(self, delegate, experiment, reporter=PrintingEvolutionReporter()):
+    def __init__(self, delegate, experiment, reporter=EvolutionReporter()):
         self.delegate = delegate
         self.experiment = experiment
         self.reporter = reporter
