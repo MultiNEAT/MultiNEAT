@@ -108,12 +108,15 @@ max_runs = 10
 max_generations = 150
 
 def getbest(run_index):
+
+    seed_genome = NEAT.Genome(0, 3, 0, 1, False, NEAT.ActivationFunction.UNSIGNED_SIGMOID,
+                    NEAT.ActivationFunction.UNSIGNED_SIGMOID, 0, params, 0)
+
+    shouldRandomizeWeights = True
+    randomWeightsMagnitude = 1.0
     randomSeed = 1234
     # randomSeed = int(time.clock()*100)
-
-    g = NEAT.Genome(0, 3, 0, 1, False, NEAT.ActivationFunction.UNSIGNED_SIGMOID,
-                    NEAT.ActivationFunction.UNSIGNED_SIGMOID, 0, params, 0)
-    pop = NEAT.Population(g, params, True, 1.0, randomSeed)
+    pop = NEAT.Population(seed_genome, params, shouldRandomizeWeights, randomWeightsMagnitude, randomSeed)
 
     generations_to_solve = "<N/A>"
     for generation in range(max_generations):
