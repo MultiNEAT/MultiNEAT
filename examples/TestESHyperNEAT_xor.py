@@ -140,7 +140,7 @@ def getbest(run):
         genome_list = NEAT.GetGenomeList(pop)
 
         fitnesses = EvaluateGenomeList_Serial(genome_list, evaluate_xor, display=False)
-        [genome.SetFitness(fitness) for genome, fitness in zip(genome_list, fitnesses)]
+        NEAT.ZipFitness(genome_list, fitnesses)
 
         print('Gen: %d Best: %3.5f' % (generation, max(fitnesses)))
 

@@ -10,7 +10,7 @@ import subprocess as comm
 import numpy as np
 import pickle as pickle
 import MultiNEAT as NEAT
-from MultiNEAT import GetGenomeList, ZipFitness, EvaluateGenomeList_Serial, EvaluateGenomeList_Parallel
+from MultiNEAT import GetGenomeList, ZipFitness, EvaluateGenomeList_Serial
 from XorExperiment import *
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
@@ -129,11 +129,8 @@ def getbest(i):
 
     for generation in range(max_generations):
         genome_list = NEAT.GetGenomeList(pop)
-        # if sys.platform == 'linux':
-        #    fitnesses = EvaluateGenomeList_Parallel(genome_list, evaluate, display=False)
-        # else:
         fitnesses = EvaluateGenomeList_Serial(genome_list, evaluate, display=False)
-        [genome.SetFitness(fitness) for genome, fitness in zip(genome_list, fitnesses)]
+        NEAT.ZipFitness(genome_list, fitnesses)
 
         net = NEAT.NeuralNetwork()
         pop.GetBestGenome().BuildPhenotype(net)

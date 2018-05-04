@@ -10,7 +10,7 @@ import numpy as np
 import cv2
 import pickle as pickle
 import MultiNEAT as NEAT
-from MultiNEAT import EvaluateGenomeList_Serial, EvaluateGenomeList_Parallel
+
 from MultiNEAT import GetGenomeList, ZipFitness
 from XorExperiment import *
 from concurrent.futures import ProcessPoolExecutor, as_completed
