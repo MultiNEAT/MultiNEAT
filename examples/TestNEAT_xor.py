@@ -129,9 +129,9 @@ def getbest(i):
     net = NEAT.NeuralNetwork()
     pop.GetBestGenome().BuildPhenotype(net)
 
-    img = NEAT.viz.Draw(net)
-    cv2.imshow("current best", img)
-    cv2.waitKey(1)
+    # img = NEAT.viz.Draw(net)
+    # cv2.imshow("current best", img)
+    # cv2.waitKey(1)
     
     return generations, net.NumHiddenNeurons(), net.NumConnections()
 
