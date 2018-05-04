@@ -15,5 +15,5 @@ class Runner:
 
   def run(self):
     self.population = self.create_seed_population()
-    self.solve(self.population)
+    self.evolve(self.population)
 

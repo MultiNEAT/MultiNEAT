@@ -15,16 +15,6 @@ from MultiNEAT import GetGenomeList, ZipFitness
 from XorExperiment import *
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
-
-def evaluate(genome):
-    net = NEAT.NeuralNetwork()
-    genome.BuildPhenotype(net)
-
-    experiment = XorExperiment(depth=5)
-
-    return experiment.fitness(net)
-
-
 params = NEAT.Parameters()
 params.PopulationSize = 100
 params.DynamicCompatibility = True
@@ -91,11 +81,11 @@ class XorNeatRunner(NEAT.Runner):
 
         return NEAT.Population(seed_genome, params, should_randomize_weights, random_weights_magnitude, random_seed)
     
-    def solve(self, population):
+    def evolve(self, population):
         self.generations_to_solve = None
 
         for generation in range(max_generations):
-            fitness_list = NEAT.EvaluateSerial(population, evaluate, display=False)
+            fitness_list = NEAT.EvaluateSerial(population, self.evaluate, display=False)
             
             best = max(fitness_list)
             if best > 15.0:
@@ -103,7 +93,14 @@ class XorNeatRunner(NEAT.Runner):
                 break
 
             population.Epoch() # evolution happens here
-        
+
+    def evaluate(self, genome):
+        net = NEAT.NeuralNetwork()
+        genome.BuildPhenotype(net)
+
+        experiment = XorExperiment(depth=5)
+
+        return experiment.fitness(net)
 
 def getbest(run_index):
 
