@@ -1,4 +1,4 @@
-
+import time
 
 class Experiment:
     def fitness(self, network):
@@ -13,9 +13,11 @@ class Experiment:
 class Runner:
   def __init__(self, *args, **kwargs):
     self.experiment = kwargs['experiment']
-    self.max_generations = 150
+    self.max_generations = 1
     self.population = None
-    self.generations_to_solve = None
+    self.generations_to_solve = 0
+    self.total_time = 0
+    self.time_per_generation = 0
 
   def create_seed_population(self):
     """Should return population"""
@@ -23,7 +25,7 @@ class Runner:
 
   def evolve(self, population):
     """Main method that runs evolution"""
-    self.generations_to_solve = None
+    self.generations_to_solve = 0
 
     self.population = population
     for generation in range(self.max_generations):
@@ -45,9 +47,16 @@ class Runner:
     """Early termination"""
     return False
 
-  def run(self):
+  def run(self, max_generations):
+    self.max_generations = max_generations
+
+    start_time = time.time()
+    
     population = self.create_seed_population()
     self.evolve(population)
+
+    self.total_time = time.time() - start_time
+    self.time_per_generation = (self.total_time / self.generations_to_solve) * 1000
 
 
 # Get all genomes from the population

@@ -95,27 +95,22 @@ class XorNeatRunner(NEAT.Runner):
     def is_solved(self, best_fitness):
         return self.experiment.is_solved(best_fitness)
 
-def getbest():
+gens = []
+for run in range(max_runs):
 
     runner = XorNeatRunner()
-    runner.run()
+    runner.run(max_generations = max_generations)
+
+    gens += [runner.generations_to_solve]
 
     net = NEAT.NeuralNetwork()
     runner.population.GetBestGenome().BuildPhenotype(net)
 
-    return runner.generations_to_solve, net.NumHiddenNeurons(), net.NumConnections()
+    print('Run: {}/{}'.format(run, max_runs - 1),
+        'Generations to solve XOR:', runner.generations_to_solve,
+        '| in %3.2f ms per gen, %3.4f s total' % (runner.time_per_generation, runner.total_time), 
+        "complexity ({}, {})".format(net.NumHiddenNeurons(), net.NumConnections()))
 
-
-gens = []
-for run in range(max_runs):
-    curtime = time.time()
-
-    gen, nodes, connections = getbest()
-    gens += [gen]
-
-    elapsed = time.time() - curtime
-    elapsedPerGen = (elapsed / gen) * 1000
-    print('Run: {}/{}'.format(run, max_runs - 1), 'Generations to solve XOR:', gen, '| in %3.2f ms per gen, %3.4f s total' % (elapsedPerGen, elapsed), "complexity ({}, {})".format(nodes, connections))
 avg_gens = sum(gens) / len(gens)
 
 print('All:', gens)

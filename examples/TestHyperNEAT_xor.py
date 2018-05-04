@@ -47,19 +47,6 @@ except:
     print('You have mistyped a substrate member name upon setup. Please fix it.')
     sys.exit(1)
 
-def evaluate(genome):
-    net = NEAT.NeuralNetwork()
-    try:
-        genome.BuildHyperNEATPhenotype(net, substrate)
-
-        experiment = XorExperiment()
-
-        return experiment.fitness(net)
-
-    except Exception as ex:
-        print('Exception:', ex)
-        return 1.0
-
 
 params = NEAT.Parameters()
 
@@ -111,6 +98,20 @@ params.AllowLoops = False
 
 max_runs = 10
 max_generations = 150
+
+def evaluate(genome):
+    net = NEAT.NeuralNetwork()
+    try:
+        genome.BuildHyperNEATPhenotype(net, substrate)
+
+        experiment = XorExperiment()
+
+        return experiment.fitness(net)
+
+    except Exception as ex:
+        print('Exception:', ex)
+        return 1.0
+
 
 def getbest(i):
     g = NEAT.Genome(0,
