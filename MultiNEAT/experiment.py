@@ -2,6 +2,7 @@
 Interface for an experiment used by runner during evaluation stage
 """
 
+
 class Experiment:
     def fitness(self, network):
         """Evalutes network and returns its fitness"""

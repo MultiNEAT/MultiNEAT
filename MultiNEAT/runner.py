@@ -1,8 +1,10 @@
 import time
 from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
+from functools import partial
 
 from .experiment import *
 from .evolution_reporter import *
+
 
 class RunnerDelegate:
     def create_seed_population(self):
@@ -13,10 +15,12 @@ class RunnerDelegate:
         """Should return phenotype from provided genome"""
         return None
 
+
 class Runner:
-    def __init__(self, delegate, experiment, *args, **kwargs):
+    def __init__(self, delegate, experiment, reporter=PrintingEvolutionReporter()):
         self.delegate = delegate
         self.experiment = experiment
+        self.reporter = reporter
 
         self.max_generations = 1
         self.population = None
@@ -26,24 +30,30 @@ class Runner:
 
     def __evolve(self, population):
         """Main method that runs evolution"""
-        self.generations_to_solve = 0
 
         self.population = population
-        for generation in range(self.max_generations):
-            fitness_list = EvaluateSerial(
-                self.population, self.__evaluate_fitness, display=False)
+        evaluator = partial(Runner._evaluate_fitness,
+                            self.delegate, self.experiment)
 
-            best_fitness = max(fitness_list)
-            if self.experiment.is_solved(best_fitness):
-                self.generations_to_solve = generation
-                break
+        with self.reporter.run(0, 0):
+            for generation in range(self.max_generations):
+                with self.reporter.generation(generation, self.max_generations):
+                    fitness_list = EvaluateParallel(population, evaluator)
 
-            self.population.Epoch()  # evolution of population happens here
+                    best_fitness = max(fitness_list)
+                    if self.experiment.is_solved(best_fitness):
+                        self.reporter.solution_found(population, generation)
+                        return
 
-    def __evaluate_fitness(self, genome):
+                    population.Epoch()  # evolution of population happens here
+
+            self.reporter.solution_not_found(population)
+
+    @staticmethod
+    def _evaluate_fitness(delegate, experiment, genome):
         """Evaluation fitness single genome"""
-        network = self.delegate.build_phenotype(genome)
-        return self.experiment.fitness(network)
+        network = delegate.build_phenotype(genome)
+        return experiment.fitness(network)
 
     def run(self, max_generations):
         """Run evolution for maximum of max_generations"""
@@ -56,7 +66,7 @@ class Runner:
 
         self.total_time = time.time() - start_time
         self.time_per_generation = (
-            self.total_time / self.generations_to_solve) * 1000
+            self.total_time / max(1, self.generations_to_solve)) * 1000
 
 
 # Get all genomes from the population
@@ -73,6 +83,7 @@ def ZipFitness(genome_list, fitness_list):
     for genome, fitness in zip(genome_list, fitness_list):
         genome.SetFitness(fitness)
         genome.SetEvaluated()
+
 
 try:
     from IPython.display import clear_output
@@ -179,7 +190,7 @@ def EvaluateGenomeList_Parallel(genome_list, evaluator,
 
         executor = EvaluateGenomeList_Parallel.executor
         if not executor:
-            executor = ThreadPoolExecutor(max_workers=cores)
+            executor = ProcessPoolExecutor(max_workers=cores)
             EvaluateGenomeList_Parallel.executor = executor
 
         for i, fitness in enumerate(executor.map(evaluator, genome_list, chunksize=batch_size)):
