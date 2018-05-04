@@ -66,11 +66,12 @@ void Gene::InitTraits(const std::map<std::string, TraitParameters> &tp, RNG &a_R
             int idx = a_RNG.Roulette(probs);
             t = itp.set[idx];
         }
+#ifdef USE_BOOST_PYTHON
         if (it->second.type == "pyobject") {
             py::object itp = bs::get<py::object>(it->second.m_Details);
             t = itp(); // details is a function that returns a random instance of the trait
         }
-
+#endif
         Trait tr;
         tr.value = t;
         tr.dep_key = it->second.dep_key;
@@ -91,10 +92,14 @@ void Gene::MateTraits(const std::map<std::string, Trait> &t, RNG &a_RNG)
         }
 
         // if generic python object, forward all processing to its method
+#ifdef USE_BOOST_PYTHON
         if (mine.type() == typeid(py::object)) {
             // call mating function
             m_Traits[it->first].value = bs::get<py::object>(mine).attr("mate")(bs::get<py::object>(yours));
-        } else {
+        } 
+        else
+#endif
+        {
 
             if (a_RNG.RandFloat() < 0.5) // pick either one
             {
@@ -249,10 +254,12 @@ bool Gene::MutateTraits(const std::map<std::string, TraitParameters> &tp, RNG &a
                 if (cur.value != itp.set[idx].value)
                     did_mutate = true;
             }
+#ifdef USE_BOOST_PYTHON
             if (it->second.type == "pyobject") {
                 m_Traits[it->first].value = bs::get<py::object>(m_Traits[it->first].value).attr("mutate")();
                 did_mutate = true;
             }
+#endif
         }
     }
 
@@ -316,11 +323,13 @@ std::map<std::string, double> Gene::GetTraitDistances(const std::map<std::string
                 dist[it->first] = abs(
                     (bs::get<floatsetelement>(mine)).value - (bs::get<floatsetelement>(yours)).value);
             }
+#ifdef USE_BOOST_PYTHON
             if (mine.type() == typeid(py::object)) {
                 // distance between objects - calculate via method
                 dist[it->first] = py::extract<double>(
                     bs::get<py::object>(mine).attr("distance_to")(bs::get<py::object>(yours)));
             }
+#endif
         }
     }
 
