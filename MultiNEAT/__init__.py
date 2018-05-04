@@ -3,6 +3,7 @@ from ._MultiNEAT import *
 from .viz import *
 from .runner import *
 from .gym_runner import *
+from .experiment import *
 from .evolution_reporter import *
 
 

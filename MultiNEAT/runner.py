@@ -1,16 +1,8 @@
 import time
+from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 
-from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor, as_completed
-
-class Experiment:
-    def fitness(self, network):
-        """Evalutes network and returns its fitness"""
-        return 0
-
-    def is_solved(self, best_fitness):
-        """Reports if best_fitness is sufficient solution and evolution can be stopped"""
-        return False
-
+from .experiment import *
+from .evolution_reporter import *
 
 class RunnerDelegate:
     def create_seed_population(self):
@@ -18,8 +10,8 @@ class RunnerDelegate:
         pass
 
     def build_phenotype(self, genome):
+        """Should return phenotype from provided genome"""
         return None
-
 
 class Runner:
     def __init__(self, delegate, experiment, *args, **kwargs):
