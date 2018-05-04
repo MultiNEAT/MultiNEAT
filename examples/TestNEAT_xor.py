@@ -70,8 +70,7 @@ max_generations = 150
 
 class XorNeatRunner(NEAT.Runner):
     def __init__(self, *args, **kwargs):
-        NEAT.Runner.__init__(self, *args, **kwargs)
-        self.experiment = XorExperiment(depth=5)
+        NEAT.Runner.__init__(self, experiment = XorExperiment(depth=5), *args, **kwargs)
 
     def create_seed_population(self):
         seed_genome = NEAT.Genome(0, 3, 0, 1, False, NEAT.ActivationFunction.UNSIGNED_SIGMOID,

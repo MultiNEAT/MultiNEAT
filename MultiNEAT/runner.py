@@ -1,7 +1,18 @@
 
 
+class Experiment:
+    def fitness(self, network):
+      """Evalutes network and returns its fitness"""
+      return 0
+
+    def is_solved(self, best_fitness):
+      """Reports if best_fitness is sufficient solution and evolution can be stopped"""
+      return False
+
+
 class Runner:
   def __init__(self, *args, **kwargs):
+    self.experiment = kwargs['experiment']
     self.max_generations = 150
     self.population = None
     self.generations_to_solve = None

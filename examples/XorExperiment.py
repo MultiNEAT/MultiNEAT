@@ -1,5 +1,7 @@
 
-class XorExperiment:
+from MultiNEAT import Experiment
+
+class XorExperiment(Experiment):
     def __init__(self, depth = 5, *args, **kwargs):
         self.depth = depth
 
@@ -15,7 +17,7 @@ class XorExperiment:
 
     def is_solved(self, best_fitness):
         return best_fitness > 15.0
-        
+
     def _evaluate(self, net, input, output):
         net.Flush()
         net.Input(input)
