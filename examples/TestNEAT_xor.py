@@ -68,10 +68,8 @@ max_runs = 10
 max_generations = 150
 
 
-class XorNeatRunner(NEAT.Runner):
-    def __init__(self, *args, **kwargs):
-        NEAT.Runner.__init__(self, experiment = XorExperiment(depth=5), *args, **kwargs)
 
+class XorNeatRunnerDelegate:
     def create_seed_population(self):
         seed_genome = NEAT.Genome(0, 3, 0, 1, False, NEAT.ActivationFunction.UNSIGNED_SIGMOID,
                             NEAT.ActivationFunction.UNSIGNED_SIGMOID, 0, params, 0)
@@ -90,8 +88,7 @@ class XorNeatRunner(NEAT.Runner):
 
 gens = []
 for run in range(max_runs):
-
-    runner = XorNeatRunner()
+    runner = NEAT.Runner(delegate = XorNeatRunnerDelegate(), experiment = XorExperiment(depth=5))
     runner.run(max_generations = max_generations)
 
     gens += [runner.generations_to_solve]

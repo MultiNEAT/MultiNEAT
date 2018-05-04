@@ -10,9 +10,18 @@ class Experiment:
         """Reports if best_fitness is sufficient solution and evolution can be stopped"""
         return False
 
+class RunnerDelegate:
+    def create_seed_population(self):
+        """Should return population"""
+        pass
+
+    def build_phenotype(self, genome):
+        return None
+
 
 class Runner:
-    def __init__(self, experiment, *args, **kwargs):
+    def __init__(self, delegate, experiment, *args, **kwargs):
+        self.delegate = delegate
         self.experiment = experiment
 
         self.max_generations = 1
@@ -21,18 +30,15 @@ class Runner:
         self.total_time = 0
         self.time_per_generation = 0
 
-    def create_seed_population(self):
-        """Should return population"""
-        pass
 
-    def evolve(self, population):
+    def __evolve(self, population):
         """Main method that runs evolution"""
         self.generations_to_solve = 0
 
         self.population = population
         for generation in range(self.max_generations):
             fitness_list = EvaluateSerial(
-                self.population, self.evaluate_fitness, display=False)
+                self.population, self.__evaluate_fitness, display=False)
 
             best_fitness = max(fitness_list)
             if self.experiment.is_solved(best_fitness):
@@ -41,25 +47,19 @@ class Runner:
 
             self.population.Epoch()  # evolution happens here
 
-    def build_phenotype(self, genome):
-        return None
 
-    def evaluate_fitness(self, genome):
+    def __evaluate_fitness(self, genome):
         """Evaluation fitness single genome"""
-        net = self.build_phenotype(genome)
-        return self.experiment.fitness(net)
-
-    def is_solved(self, best_fitness):
-        """Early termination"""
-        return 
+        network = self.delegate.build_phenotype(genome)
+        return self.experiment.fitness(network)
 
     def run(self, max_generations):
         self.max_generations = max_generations
 
         start_time = time.time()
 
-        population = self.create_seed_population()
-        self.evolve(population)
+        population = self.delegate.create_seed_population()
+        self.__evolve(population)
 
         self.total_time = time.time() - start_time
         self.time_per_generation = (
