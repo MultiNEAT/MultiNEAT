@@ -13,6 +13,9 @@ class XorExperiment:
 
         return (4 - error) ** 2
 
+    def is_solved(self, best_fitness):
+        return best_fitness > 15.0
+        
     def _evaluate(self, net, input, output):
         net.Flush()
         net.Input(input)

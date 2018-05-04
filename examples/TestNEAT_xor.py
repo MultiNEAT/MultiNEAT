@@ -64,11 +64,14 @@ params.MutateLinkTraitsProb = 0
 params.AllowLoops = True
 params.AllowClones = True
 
-max_runs = 100
+max_runs = 10
 max_generations = 150
 
 
 class XorNeatRunner(NEAT.Runner):
+    def __init__(self, *args, **kwargs):
+        NEAT.Runner.__init__(self, *args, **kwargs)
+        self.experiment = XorExperiment(depth=5)
 
     def create_seed_population(self):
         seed_genome = NEAT.Genome(0, 3, 0, 1, False, NEAT.ActivationFunction.UNSIGNED_SIGMOID,
@@ -80,27 +83,18 @@ class XorNeatRunner(NEAT.Runner):
         random_seed = int(time.clock()*100)
 
         return NEAT.Population(seed_genome, params, should_randomize_weights, random_weights_magnitude, random_seed)
-    
-    def evolve(self, population):
-        self.generations_to_solve = None
 
-        for generation in range(max_generations):
-            fitness_list = NEAT.EvaluateSerial(population, self.evaluate, display=False)
-            
-            best = max(fitness_list)
-            if best > 15.0:
-                self.generations_to_solve = generation
-                break
-
-            population.Epoch() # evolution happens here
-
-    def evaluate(self, genome):
+    def build_phenotype(self, genome):
         net = NEAT.NeuralNetwork()
         genome.BuildPhenotype(net)
+        return net
 
-        experiment = XorExperiment(depth=5)
+    def evaluate_fitness(self, genome):
+        net = self.build_phenotype(genome)
+        return self.experiment.fitness(net)
 
-        return experiment.fitness(net)
+    def is_solved(self, best_fitness):
+        return self.experiment.is_solved(best_fitness)
 
 def getbest(run_index):
 
