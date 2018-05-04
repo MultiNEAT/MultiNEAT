@@ -17,14 +17,13 @@ class RunnerDelegate:
 
 
 class Runner:
-    def __init__(self, delegate, experiment, reporter=EvolutionReporter()):
+    def __init__(self, delegate, experiment, reporter=DummyEvolutionReporter()):
         self.delegate = delegate
         self.experiment = experiment
         self.reporter = reporter
 
         self.max_generations = 1
         self.population = None
-        self.generations_to_solve = 0
         self.total_time = 0
         self.time_per_generation = 0
 
@@ -38,7 +37,7 @@ class Runner:
         with self.reporter.run(0, 0):
             for generation in range(self.max_generations):
                 with self.reporter.generation(generation, self.max_generations):
-                    fitness_list = EvaluateParallel(population, evaluator)
+                    fitness_list = EvaluateSerial(population, evaluator)
 
                     best_fitness = max(fitness_list)
                     if self.experiment.is_solved(best_fitness):
@@ -65,8 +64,6 @@ class Runner:
         self.__evolve(population)
 
         self.total_time = time.time() - start_time
-        self.time_per_generation = (
-            self.total_time / max(1, self.generations_to_solve)) * 1000
 
 
 # Get all genomes from the population

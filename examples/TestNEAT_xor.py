@@ -88,19 +88,22 @@ class XorNeatRunnerDelegate:
 
 gens = []
 for run in range(max_runs):
+    reporter = NEAT.CollectingEvolutionReporter()
+    # reporter = NEAT.PrintingEvolutionReporter(NEAT.Print.SOLUTION_FOUND)
     runner = NEAT.Runner(delegate = XorNeatRunnerDelegate(),
                             experiment = XorExperiment(depth=5),
-                            reporter = NEAT.PrintingEvolutionReporter(NEAT.Print.SOLUTION_FOUND))
+                            reporter = reporter
+                            )
     runner.run(max_generations = max_generations)
 
-    gens += [runner.generations_to_solve]
+    gens += [reporter.last_generation]
 
     net = NEAT.NeuralNetwork()
     runner.population.GetBestGenome().BuildPhenotype(net)
 
     print('Run: {}/{}'.format(run, max_runs - 1),
-        'Generations to solve XOR:', runner.generations_to_solve,
-        '| in %3.2f ms per gen, %3.4f s total' % (runner.time_per_generation, runner.total_time), 
+        'Generations to solve XOR:', reporter.last_generation,
+        '| in %3.2f ms per gen, %3.4f s total' % ((runner.total_time / reporter.last_generation) * 1000, runner.total_time), 
         "complexity ({}, {})".format(net.NumHiddenNeurons(), net.NumConnections()))
 
 avg_gens = sum(gens) / len(gens)
