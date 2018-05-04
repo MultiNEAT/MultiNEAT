@@ -46,12 +46,15 @@ namespace NEAT
 {
 
 // The constructor
-Population::Population(const Genome& a_Seed, const Parameters& a_Parameters,
-		               bool a_RandomizeWeights, double a_RandomizationRange, int a_RNG_seed)
+Population::Population(const Genome& seedGenome,
+                       const Parameters& parameters,
+		               bool shouldRandomizeWeights,
+                       double randomWeightsMagnitude,
+                       int randomSeed)
 {
-    m_RNG.Seed(a_RNG_seed);
+    m_RNG.Seed(randomSeed);
     m_BestFitnessEver = 0.0;
-    m_Parameters = a_Parameters;
+    m_Parameters = parameters;
 
     m_Generation = 0;
     m_NumEvaluations = 0;
@@ -63,7 +66,7 @@ Population::Population(const Genome& a_Seed, const Parameters& a_Parameters,
     // Spawn the population
     for(unsigned int i=0; i<m_Parameters.PopulationSize; i++)
     {
-        Genome t_clone = a_Seed;
+        Genome t_clone = seedGenome;
         t_clone.SetID(i);
         m_Genomes.push_back( t_clone );
     }
@@ -71,20 +74,20 @@ Population::Population(const Genome& a_Seed, const Parameters& a_Parameters,
     // Now now initialize each genome's weights
     for(unsigned int i=0; i<m_Genomes.size(); i++)
     {
-        if (a_RandomizeWeights)
+        if (shouldRandomizeWeights)
         {
             bool is_invalid = true;
             while (is_invalid)
             {
-                m_Genomes[i].Randomize_LinkWeights(a_RandomizationRange, m_RNG);
+                m_Genomes[i].Randomize_LinkWeights(randomWeightsMagnitude, m_RNG);
                 // randomize the traits as well
-                m_Genomes[i].Randomize_Traits(a_Parameters, m_RNG);
+                m_Genomes[i].Randomize_Traits(parameters, m_RNG);
                 // and mutate nodes one initial time
-                m_Genomes[i].Mutate_NeuronActivations_A(a_Parameters, m_RNG);
-                m_Genomes[i].Mutate_NeuronActivations_B(a_Parameters, m_RNG);
-                m_Genomes[i].Mutate_NeuronActivation_Type(a_Parameters, m_RNG);
-                m_Genomes[i].Mutate_NeuronTimeConstants(a_Parameters, m_RNG);
-                m_Genomes[i].Mutate_NeuronBiases(a_Parameters, m_RNG);
+                m_Genomes[i].Mutate_NeuronActivations_A(parameters, m_RNG);
+                m_Genomes[i].Mutate_NeuronActivations_B(parameters, m_RNG);
+                m_Genomes[i].Mutate_NeuronActivation_Type(parameters, m_RNG);
+                m_Genomes[i].Mutate_NeuronTimeConstants(parameters, m_RNG);
+                m_Genomes[i].Mutate_NeuronBiases(parameters, m_RNG);
 
                 // check in the population if there is a clone of that genome
                 is_invalid = false;
@@ -106,7 +109,7 @@ Population::Population(const Genome& a_Seed, const Parameters& a_Parameters,
                 // Also don't let any genome to fail the constraints
                 if (!is_invalid) // doesn't make sense to do the test if already failed
                 {
-                    if (m_Genomes[i].FailsConstraints(a_Parameters))
+                    if (m_Genomes[i].FailsConstraints(parameters))
                     {
                         is_invalid = true;
                     }
@@ -130,7 +133,7 @@ Population::Population(const Genome& a_Seed, const Parameters& a_Parameters,
     }
 
     // Initialize the innovation database
-    m_InnovationDatabase.Init(a_Seed);
+    m_InnovationDatabase.Init(seedGenome);
 
     m_BestGenome = m_Species[0].GetLeader();
 
