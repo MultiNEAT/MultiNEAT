@@ -95,7 +95,7 @@ class XorNeatRunner(NEAT.Runner):
     def is_solved(self, best_fitness):
         return self.experiment.is_solved(best_fitness)
 
-def getbest(run_index):
+def getbest():
 
     runner = XorNeatRunner()
     runner.run()
@@ -110,7 +110,7 @@ gens = []
 for run in range(max_runs):
     curtime = time.time()
 
-    gen, nodes, connections = getbest(run)
+    gen, nodes, connections = getbest()
     gens += [gen]
 
     elapsed = time.time() - curtime
