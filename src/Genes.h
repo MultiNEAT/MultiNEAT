@@ -319,30 +319,14 @@ namespace NEAT
         //////////////
 
         // Accessing static (const) variables
-        int ID() const
-        {
-            return m_ID;
-        }
+        int ID() const;
 
-        NeuronType Type() const
-        {
-            return m_Type;
-        }
+        NeuronType Type() const;
 
-        double SplitY() const
-        {
-            return m_SplitY;
-        }
+        double SplitY() const;
 
         // Initializing
-        void Init(double a_A, double a_B, double a_TimeConstant, double a_Bias, ActivationFunction a_ActFunc)
-        {
-            m_A = a_A;
-            m_B = a_B;
-            m_TimeConstant = a_TimeConstant;
-            m_Bias = a_Bias;
-            m_ActFunction = a_ActFunc;
-        }
+        void Init(double a_A, double a_B, double a_TimeConstant, double a_Bias, ActivationFunction a_ActFunc);
     };
 
 

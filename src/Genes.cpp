@@ -420,4 +420,29 @@ NeuronGene::NeuronGene(NeuronType a_type, int a_id, double a_splity)
     x = 0;
     y = 0;
 }
+
+int NeuronGene::ID() const
+{
+    return m_ID;
+}
+
+NeuronType NeuronGene::Type() const
+{
+    return m_Type;
+}
+
+double NeuronGene::SplitY() const
+{
+    return m_SplitY;
+}
+
+// Initializing
+void NeuronGene::Init(double a_A, double a_B, double a_TimeConstant, double a_Bias, ActivationFunction a_ActFunc)
+{
+    m_A = a_A;
+    m_B = a_B;
+    m_TimeConstant = a_TimeConstant;
+    m_Bias = a_Bias;
+    m_ActFunction = a_ActFunc;
+}
 }
