@@ -107,23 +107,24 @@ params.AllowClones = True
 max_runs = 10
 max_generations = 150
 
-def getbest(i):
+def getbest(run_index):
+    randomSeed = 1234
+    # randomSeed = int(time.clock()*100)
+
     g = NEAT.Genome(0, 3, 0, 1, False, NEAT.ActivationFunction.UNSIGNED_SIGMOID,
                     NEAT.ActivationFunction.UNSIGNED_SIGMOID, 0, params, 0)
-    pop = NEAT.Population(g, params, True, 1.0, i)
-    # pop.RNG.Seed(int(time.clock()*100))
-    pop.RNG.Seed(1234)
+    pop = NEAT.Population(g, params, True, 1.0, randomSeed)
 
-    generations = 0
+    generations_to_solve = "<N/A>"
     for generation in range(max_generations):
         genome_list = NEAT.GetGenomeList(pop)
         fitness_list = EvaluateGenomeList_Serial(genome_list, evaluate, display=False)
         # fitness_list = EvaluateGenomeList_Parallel(genome_list, evaluate, display=False)
         NEAT.ZipFitness(genome_list, fitness_list)
         pop.Epoch()
-        generations = generation
         best = max(fitness_list)
         if best > 15.0:
+            generations_to_solve = generation
             break
 
     net = NEAT.NeuralNetwork()
@@ -133,7 +134,7 @@ def getbest(i):
     cv2.imshow("current best", img)
     cv2.waitKey(1)
     
-    return generations, net.NumHiddenNeurons(), net.NumConnections()
+    return generations_to_solve, net.NumHiddenNeurons(), net.NumConnections()
 
 
 gens = []
