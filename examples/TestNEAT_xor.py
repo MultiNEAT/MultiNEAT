@@ -77,37 +77,43 @@ params.AllowClones = True
 max_runs = 100
 max_generations = 150
 
+
+class XorNeatRunner(NEAT.Runner):
+
+    def create_seed_population(self):
+        seed_genome = NEAT.Genome(0, 3, 0, 1, False, NEAT.ActivationFunction.UNSIGNED_SIGMOID,
+                            NEAT.ActivationFunction.UNSIGNED_SIGMOID, 0, params, 0)
+
+        should_randomize_weights = True
+        random_weights_magnitude = 1.0
+        # random_seed = 1234
+        random_seed = int(time.clock()*100)
+
+        return NEAT.Population(seed_genome, params, should_randomize_weights, random_weights_magnitude, random_seed)
+    
+    def solve(self, population):
+        self.generations_to_solve = None
+
+        for generation in range(max_generations):
+            fitness_list = NEAT.EvaluateSerial(population, evaluate, display=False)
+            
+            best = max(fitness_list)
+            if best > 15.0:
+                self.generations_to_solve = generation
+                break
+
+            population.Epoch() # evolution happens here
+        
+
 def getbest(run_index):
 
-    seed_genome = NEAT.Genome(0, 3, 0, 1, False, NEAT.ActivationFunction.UNSIGNED_SIGMOID,
-                    NEAT.ActivationFunction.UNSIGNED_SIGMOID, 0, params, 0)
-
-    shouldRandomizeWeights = True
-    randomWeightsMagnitude = 1.0
-    # randomSeed = 1234
-    randomSeed = int(time.clock()*100)
-    pop = NEAT.Population(seed_genome, params, shouldRandomizeWeights, randomWeightsMagnitude, randomSeed)
-
-    generations_to_solve = "<N/A>"
-    for generation in range(max_generations):
-        fitness_list = NEAT.EvaluateSerial(pop, evaluate, display=False)
-        
-        best = max(fitness_list)
-        if best > 15.0:
-            generations_to_solve = generation
-            break
-
-
+    runner = XorNeatRunner()
+    runner.run()
 
     net = NEAT.NeuralNetwork()
-    pop.GetBestGenome().BuildPhenotype(net)
+    runner.population.GetBestGenome().BuildPhenotype(net)
 
-    # if net.NumHiddenNeurons() == 0:
-    #     img = NEAT.viz.Draw(net)
-    #     cv2.imshow("solved with 0 nodes", img)
-    #     cv2.waitKey(1)
-    
-    return generations_to_solve, net.NumHiddenNeurons(), net.NumConnections()
+    return runner.generations_to_solve, net.NumHiddenNeurons(), net.NumConnections()
 
 
 gens = []
