@@ -88,13 +88,6 @@ class XorNeatRunner(NEAT.Runner):
         genome.BuildPhenotype(net)
         return net
 
-    def evaluate_fitness(self, genome):
-        net = self.build_phenotype(genome)
-        return self.experiment.fitness(net)
-
-    def is_solved(self, best_fitness):
-        return self.experiment.is_solved(best_fitness)
-
 gens = []
 for run in range(max_runs):
 

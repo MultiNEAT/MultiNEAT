@@ -1,62 +1,69 @@
 import time
 
+
 class Experiment:
     def fitness(self, network):
-      """Evalutes network and returns its fitness"""
-      return 0
+        """Evalutes network and returns its fitness"""
+        return 0
 
     def is_solved(self, best_fitness):
-      """Reports if best_fitness is sufficient solution and evolution can be stopped"""
-      return False
+        """Reports if best_fitness is sufficient solution and evolution can be stopped"""
+        return False
 
 
 class Runner:
-  def __init__(self, *args, **kwargs):
-    self.experiment = kwargs['experiment']
-    self.max_generations = 1
-    self.population = None
-    self.generations_to_solve = 0
-    self.total_time = 0
-    self.time_per_generation = 0
+    def __init__(self, experiment, *args, **kwargs):
+        self.experiment = experiment
 
-  def create_seed_population(self):
-    """Should return population"""
-    pass
+        self.max_generations = 1
+        self.population = None
+        self.generations_to_solve = 0
+        self.total_time = 0
+        self.time_per_generation = 0
 
-  def evolve(self, population):
-    """Main method that runs evolution"""
-    self.generations_to_solve = 0
+    def create_seed_population(self):
+        """Should return population"""
+        pass
 
-    self.population = population
-    for generation in range(self.max_generations):
-        fitness_list = EvaluateSerial(self.population, self.evaluate_fitness, display=False)
-        
-        best = max(fitness_list)
-        if self.is_solved(best):
-            self.generations_to_solve = generation
-            break
+    def evolve(self, population):
+        """Main method that runs evolution"""
+        self.generations_to_solve = 0
 
-        self.population.Epoch() # evolution happens here
+        self.population = population
+        for generation in range(self.max_generations):
+            fitness_list = EvaluateSerial(
+                self.population, self.evaluate_fitness, display=False)
 
+            best_fitness = max(fitness_list)
+            if self.experiment.is_solved(best_fitness):
+                self.generations_to_solve = generation
+                break
 
-  def evaluate_fitness(self, genome):
-    """Evaluation fitness single genome"""
-    pass
+            self.population.Epoch()  # evolution happens here
 
-  def is_solved(self, best_fitness):
-    """Early termination"""
-    return False
+    def build_phenotype(self, genome):
+        return None
 
-  def run(self, max_generations):
-    self.max_generations = max_generations
+    def evaluate_fitness(self, genome):
+        """Evaluation fitness single genome"""
+        net = self.build_phenotype(genome)
+        return self.experiment.fitness(net)
 
-    start_time = time.time()
-    
-    population = self.create_seed_population()
-    self.evolve(population)
+    def is_solved(self, best_fitness):
+        """Early termination"""
+        return 
 
-    self.total_time = time.time() - start_time
-    self.time_per_generation = (self.total_time / self.generations_to_solve) * 1000
+    def run(self, max_generations):
+        self.max_generations = max_generations
+
+        start_time = time.time()
+
+        population = self.create_seed_population()
+        self.evolve(population)
+
+        self.total_time = time.time() - start_time
+        self.time_per_generation = (
+            self.total_time / self.generations_to_solve) * 1000
 
 
 # Get all genomes from the population
@@ -74,6 +81,7 @@ def ZipFitness(genome_list, fitness_list):
         genome.SetFitness(fitness)
         genome.SetEvaluated()
 
+
 try:
     import networkx as nx
 
@@ -84,10 +92,10 @@ try:
         gr = nx.DiGraph()
 
         for i, tp, traits in nts:
-            gr.add_node( i, **traits)
+            gr.add_node(i, **traits)
 
         for inp, outp, traits in lts:
-            gr.add_edge( inp, outp, **traits )
+            gr.add_edge(inp, outp, **traits)
 
         gr.genome_traits = g.GetGenomeTraits()
 
@@ -112,6 +120,7 @@ try:
 except:
     pbar_installed = False
 
+
 def static_vars(**kwargs):
     """ A little helper that allows to add static vars to functions """
     def decorate(func):
@@ -120,21 +129,24 @@ def static_vars(**kwargs):
         return func
     return decorate
 
+
 def EvaluateSerial(population, evaluator, display=False, show_elapsed=False):
     genome_list = GetGenomeList(population)
-    fitness_list = EvaluateGenomeList_Serial(genome_list, evaluator, display=display, show_elapsed=show_elapsed)
+    fitness_list = EvaluateGenomeList_Serial(
+        genome_list, evaluator, display=display, show_elapsed=show_elapsed)
     ZipFitness(genome_list, fitness_list)
 
     return fitness_list
+
 
 def EvaluateParallel(population, evaluator,
-                                cores=None, display=False, ipython_client=None):
+                     cores=None, display=False, ipython_client=None):
     genome_list = GetGenomeList(population)
-    fitness_list = EvaluateGenomeList_Parallel(genome_list, evaluator, cores=cores, display=display, ipython_client=ipython_client)
+    fitness_list = EvaluateGenomeList_Parallel(
+        genome_list, evaluator, cores=cores, display=display, ipython_client=ipython_client)
     ZipFitness(genome_list, fitness_list)
 
     return fitness_list
-
 
 
 # Evaluates all genomes in sequential manner (using only 1 process) and
@@ -153,14 +165,16 @@ def EvaluateGenomeList_Serial(genome_list, evaluator, display=False, show_elapse
         pbar.max_value = len(genome_list)
         pbar.min_value = 0
 
-    for i,g in enumerate(genome_list):
+    for i, g in enumerate(genome_list):
         f = evaluator(g)
         fitnesses.append(f)
 
         if display:
             if not pbar_installed:
-                if ipython_installed: clear_output(wait=True)
-                print('Individuals: (%s/%s) Fitness: %3.4f' % (count, len(genome_list), f))
+                if ipython_installed:
+                    clear_output(wait=True)
+                print('Individuals: (%s/%s) Fitness: %3.4f' %
+                      (count, len(genome_list), f))
             else:
                 pbar.update(i)
         count += 1
@@ -194,7 +208,7 @@ def EvaluateGenomeList_Parallel(genome_list, evaluator,
             cores = 2
     batch_size = min(100, int(len(genome_list) / cores))
     if ipython_client is None or not ipython_installed:
-        
+
         executor = EvaluateGenomeList_Parallel.executor
         if not executor:
             executor = ProcessPoolExecutor(max_workers=cores)
@@ -204,19 +218,23 @@ def EvaluateGenomeList_Parallel(genome_list, evaluator,
             fitnesses += [fitness]
 
             if display:
-                if ipython_installed: clear_output(wait=True)
-                print('Individuals: (%s/%s) Fitness: %3.4f' % (i, len(genome_list), fitness))
+                if ipython_installed:
+                    clear_output(wait=True)
+                print('Individuals: (%s/%s) Fitness: %3.4f' %
+                      (i, len(genome_list), fitness))
     else:
         if type(ipython_client) == Client:
             lbview = ipython_client.load_balanced_view()
             amr = lbview.map(evaluator, genome_list, ordered=True, block=False)
             for i, fitness in enumerate(amr):
                 if display:
-                    if ipython_installed: clear_output(wait=True)
+                    if ipython_installed:
+                        clear_output(wait=True)
                     print('Individual:', i, 'Fitness:', fitness)
                 fitnesses.append(fitness)
         else:
-            raise ValueError('Please provide valid IPython.parallel Client() as ipython_client')
+            raise ValueError(
+                'Please provide valid IPython.parallel Client() as ipython_client')
 
     elapsed = time.time() - curtime
 
