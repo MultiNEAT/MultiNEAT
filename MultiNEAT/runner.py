@@ -46,7 +46,7 @@ class Runner:
                 self.generations_to_solve = generation
                 break
 
-            self.population.Epoch()  # evolution happens here
+            self.population.Epoch()  # evolution of population happens here
 
     def __evaluate_fitness(self, genome):
         """Evaluation fitness single genome"""
