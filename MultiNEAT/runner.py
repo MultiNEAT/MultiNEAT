@@ -1,5 +1,6 @@
 import time
 
+from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor, as_completed
 
 class Experiment:
     def fitness(self, network):
