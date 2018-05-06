@@ -88,19 +88,20 @@ maxf_ever = 0
 
 env = gym.make('LunarLander-v2')
 
-def interact_with_nn(net):
-    global out
-    inp = observation.tolist()
-    net.Input(inp + [1.0])
-    #print(inp)
-    net.ActivateLeaky(0.1)
-    out = list(net.Output())
-    #print(np.argmax(list(out)))
-    #out[0] *= 10.0
-    #if out[0] < 0.0: out[0] = -2.0
-    #if out[0] > 0.0: out[0] = 2.0
-    return inp
 
+def evaluate(genome):
+    net = NEAT.NeuralNetwork()
+    genome.BuildPhenotype(net)
+
+    avg_reward = 0
+
+    for trial in range(trials):
+        avg_reward += do_trial(net)
+
+    avg_reward /= trials
+
+    #print(avg_reward)
+    return 1000000 + avg_reward
 
 def do_trial(net):
     global observation, reward, t, img, action, done, info, avg_reward
@@ -129,20 +130,20 @@ def do_trial(net):
         f += reward
 
     return f
+    
+def interact_with_nn(net):
+    global out
+    inp = observation.tolist()
+    net.Input(inp + [1.0])
+    #print(inp)
+    net.ActivateLeaky(0.1)
+    out = list(net.Output())
+    #print(np.argmax(list(out)))
+    #out[0] *= 10.0
+    #if out[0] < 0.0: out[0] = -2.0
+    #if out[0] > 0.0: out[0] = 2.0
+    return inp
 
-def evaluate(genome):
-    net = NEAT.NeuralNetwork()
-    genome.BuildPhenotype(net)
-
-    avg_reward = 0
-
-    for trial in range(trials):
-        avg_reward += do_trial(net)
-
-    avg_reward /= trials
-
-    #print(avg_reward)
-    return 1000000 + avg_reward
 
 try:
 
